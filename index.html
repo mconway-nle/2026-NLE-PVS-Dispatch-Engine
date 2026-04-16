@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLE Dispatch Engine | New Leaf Energy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --nle-green:      #2D6A4F;
+    --nle-green-dark: #1B4332;
+    --nle-green-mid:  #40916C;
+    --nle-green-lite: #74C69D;
+    --nle-green-pale: #D8F3DC;
+    --nle-accent:     #52B788;
+    --white:          #FFFFFF;
+    --off-white:      #F8FAF9;
+    --border:         #E0EDE6;
+    --text-primary:   #1B2E23;
+    --text-secondary: #4A6859;
+    --text-muted:     #8BAD9A;
+    --error:          #C0392B;
+    --warning:        #E67E22;
+    --mono:           'DM Mono', monospace;
+    --sans:           'DM Sans', sans-serif;
+    --radius:         8px;
+    --shadow:         0 1px 3px rgba(27,67,50,0.08), 0 4px 16px rgba(27,67,50,0.06);
+    --shadow-lg:      0 8px 32px rgba(27,67,50,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 15px; scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--off-white);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--nle-green-dark);
+    color: white;
+    padding: 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--nle-accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .logo-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: white;
+  }
+
+  .logo-sub {
+    font-size: 0.72rem;
+    color: var(--nle-green-lite);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .header-badge {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--nle-green-lite);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 2.5rem 0 2rem;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--nle-green-mid);
+    background: var(--nle-green-pale);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    font-weight: 300;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-header-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--nle-green-pale);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .card-header h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    letter-spacing: -0.01em;
+  }
+
+  .card-header .card-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: auto;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  /* ── Drop zone ── */
+  .dropzone {
+    border: 2px dashed var(--nle-green-lite);
+    border-radius: 10px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--nle-green-pale);
+    position: relative;
+  }
+
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: var(--nle-green-mid);
+    background: #C9EDD5;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+  }
+
+  .dropzone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .dropzone-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .dropzone h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    margin-bottom: 0.35rem;
+  }
+
+  .dropzone p {
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+  }
+
+  .dropzone .file-type {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    background: var(--nle-accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+
+  .file-loaded {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 1rem;
+    background: var(--nle-green-pale);
+    border-radius: var(--radius);
+    border: 1px solid var(--nle-green-lite);
+    margin-top: 1rem;
+  }
+
+  .file-loaded.visible { display: flex; }
+
+  .file-loaded-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--nle-accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .file-loaded-name {
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: var(--nle-green-dark);
+  }
+
+  .file-loaded-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  /* ── Parameters grid ── */
+  .params-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .params-section {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+  }
+
+  .params-section-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--nle-green-mid);
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .params-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .field {
+    margin-bottom: 0.75rem;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .field-row:focus-within {
+    border-color: var(--nle-green-mid);
+    box-shadow: 0 0 0 3px rgba(64,145,108,0.12);
+  }
+
+  .field-row input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.45rem 0.65rem;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    background: transparent;
+    min-width: 0;
+  }
+
+  .field-unit {
+    padding: 0.45rem 0.65rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: var(--off-white);
+    border-left: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .field-locked {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--off-white);
+  }
+
+  .field-locked-val {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .field-locked-unit {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .lock-icon {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Run button ── */
+  .run-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn-run {
+    background: var(--nle-green-dark);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-run:hover:not(:disabled) {
+    background: var(--nle-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(27,67,50,0.25);
+  }
+
+  .btn-run:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-run .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .btn-run.running .spinner { display: block; }
+  .btn-run.running .run-label { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .run-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    display: none;
+    margin-top: 1rem;
+  }
+
+  .progress-wrap.visible { display: block; }
+
+  .progress-bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--nle-green-mid), var(--nle-accent));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* ── Results ── */
+  #results-section {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  #results-section.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Summary stats ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    text-align: center;
+  }
+
+  .stat-card.highlight {
+    background: var(--nle-green-dark);
+    border-color: var(--nle-green-dark);
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-card.highlight .stat-value { color: white; }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+
+  .stat-card.highlight .stat-label { color: var(--nle-green-lite); }
+
+  /* ── Monthly chart ── */
+  .monthly-chart {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+    align-items: end;
+    height: 120px;
+    padding: 0 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .chart-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .chart-bar {
+    width: 100%;
+    background: var(--nle-green-mid);
+    border-radius: 3px 3px 0 0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-height: 2px;
+    position: relative;
+  }
+
+  .chart-bar:hover { background: var(--nle-accent); }
+
+  .chart-bar-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .chart-tooltip {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--nle-green-dark);
+    color: white;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 3px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s;
+  }
+
+  .chart-bar:hover .chart-tooltip { opacity: 1; }
+
+  /* ── Data preview table ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  th {
+    background: var(--nle-green-dark);
+    color: white;
+    padding: 0.6rem 0.85rem;
+    text-align: left;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.4rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  tr:nth-child(even) td { background: var(--off-white); }
+  tr:hover td { background: var(--nle-green-pale); color: var(--text-primary); }
+
+  td.negative { color: var(--error); }
+  td.num { text-align: right; }
+
+  /* ── Download buttons ── */
+  .download-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .btn-download {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 0.83rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn-download.csv {
+    background: white;
+    color: var(--nle-green-dark);
+    border: 1.5px solid var(--nle-green-mid);
+  }
+
+  .btn-download.csv:hover {
+    background: var(--nle-green-pale);
+    border-color: var(--nle-green-dark);
+  }
+
+  .btn-download.xlsx {
+    background: var(--nle-green);
+    color: white;
+  }
+
+  .btn-download.xlsx:hover {
+    background: var(--nle-green-dark);
+    box-shadow: 0 3px 10px rgba(27,67,50,0.2);
+  }
+
+  /* ── Error ── */
+  .error-box {
+    background: #FDF0EF;
+    border: 1px solid #F5B7B1;
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    font-size: 0.83rem;
+    color: var(--error);
+    display: none;
+    margin-top: 0.75rem;
+  }
+
+  .error-box.visible { display: block; }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  footer span { color: var(--nle-green-mid); }
+
+  /* ── Advanced toggle ── */
+  .advanced-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--nle-green-mid);
+    margin-top: 0.85rem;
+    padding: 0.5rem 0;
+    border: none;
+    background: none;
+    font-family: var(--sans);
+    user-select: none;
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid var(--border);
+  }
+
+  .advanced-toggle:hover { color: var(--nle-green); }
+
+  .advanced-toggle .chevron {
+    transition: transform 0.2s ease;
+    font-size: 0.65rem;
+  }
+
+  .advanced-toggle.open .chevron { transform: rotate(180deg); }
+
+  .advanced-section {
+    display: none;
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--border);
+    animation: fadeIn 0.2s ease;
+  }
+
+  .advanced-section.open { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Battery size chips ── */
+  .battery-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.4rem;
+  }
+
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1.5px solid var(--nle-green-mid);
+    background: var(--nle-green-pale);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--nle-green-dark);
+    font-weight: 500;
+  }
+
+  .chip-remove {
+    cursor: pointer;
+    color: var(--nle-green-mid);
+    font-size: 0.8rem;
+    line-height: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--sans);
+  }
+
+  .chip-remove:hover { color: var(--error); }
+
+  .chip-add-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 0.5rem;
+  }
+
+  .chip-add-row input {
+    width: 90px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.35rem 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    outline: none;
+  }
+
+  .chip-add-row input:focus {
+    border-color: var(--nle-green-mid);
+    box-shadow: 0 0 0 3px rgba(64,145,108,0.12);
+  }
+
+  .btn-chip-add {
+    padding: 0.35rem 0.75rem;
+    background: var(--nle-green-mid);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 500;
+  }
+
+  .btn-chip-add:hover { background: var(--nle-green); }
+
+  /* ── Multi-scenario results tabs ── */
+  .scenario-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .scenario-tab {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: var(--sans);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+  }
+
+  .scenario-tab:hover { color: var(--nle-green-mid); }
+
+  .scenario-tab.active {
+    color: var(--nle-green-dark);
+    border-bottom-color: var(--nle-green-dark);
+    font-weight: 600;
+  }
+
+  .scenario-panel { display: none; }
+  .scenario-panel.active { display: block; }
+
+  /* ── Comparison table ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
+
+  .comparison-table th {
+    background: var(--nle-green-dark);
+    color: white;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .comparison-table td {
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .comparison-table tr:nth-child(even) td { background: var(--off-white); }
+  .comparison-table td.best {
+    color: var(--nle-green-dark);
+    font-weight: 600;
+  }
+
+  /* ── Day explorer ── */
+  .day-explorer {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+  }
+
+  .day-explorer-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.85rem;
+  }
+
+  .explorer-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  /* Calendar */
+  .cal-wrap {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    min-width: 220px;
+  }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+  }
+
+  .cal-nav-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--nle-green-mid);
+    font-size: 1rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+  }
+
+  .cal-nav-btn:hover { background: var(--nle-green-pale); }
+
+  .cal-month-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  .cal-dow {
+    text-align: center;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 3px 0;
+  }
+
+  .cal-day {
+    text-align: center;
+    font-size: 0.72rem;
+    padding: 5px 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    transition: all 0.1s;
+    border: 1.5px solid transparent;
+  }
+
+  .cal-day:hover {
+    background: var(--nle-green-pale);
+    color: var(--nle-green-dark);
+  }
+
+  .cal-day.active {
+    background: var(--nle-green-dark);
+    color: white;
+    font-weight: 600;
+  }
+
+  .cal-day.empty { cursor: default; }
+  .cal-day.empty:hover { background: none; }
+
+  /* Chart */
+  .chart-container {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1rem 0.5rem;
+    position: relative;
+  }
+
+  .chart-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .chart-svg-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  canvas.day-chart {
+    width: 100%;
+    height: 220px;
+    display: block;
+  }
+
+  .chart-no-data {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  /* Responsive ── */
+  @media (max-width: 700px) {
+    .explorer-layout { grid-template-columns: 1fr; }
+    .cal-wrap { min-width: unset; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .params-grid { grid-template-columns: 1fr; }
+    .stats-grid  { grid-template-columns: 1fr 1fr; }
+    header { padding: 0 1rem; }
+    main   { padding: 1.5rem 1rem 3rem; }
+    .hero h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🌿</div>
+    <div>
+      <div class="logo-text">New Leaf Energy</div>
+      <div class="logo-sub">DC Coupling Dispatch Engine</div>
+    </div>
+  </div>
+  <div class="header-badge">v1.0 · ESMOT</div>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Energy Storage Dispatch Tool</div>
+    <h1>PV+Storage 8760 Generator</h1>
+    <p>Upload a PVSyst hourly export, configure your system, and receive a complete DC-coupled dispatch profile — ready for your financial model.</p>
+  </div>
+
+  <!-- Step 1: Upload -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📂</div>
+      <h2>Step 1 — Upload PVSyst 8760 CSV</h2>
+    </div>
+    <div class="card-body">
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="file-input" accept=".csv">
+        <span class="dropzone-icon">☁️</span>
+        <h3>Drag & drop your PVSyst export</h3>
+        <p>or click to browse your files</p>
+        <span class="file-type">.CSV</span>
+      </div>
+      <div class="file-loaded" id="file-loaded">
+        <div class="file-loaded-icon">✓</div>
+        <div>
+          <div class="file-loaded-name" id="file-name">—</div>
+          <div class="file-loaded-meta" id="file-meta">—</div>
+        </div>
+      </div>
+      <div class="error-box" id="parse-error"></div>
+    </div>
+  </div>
+
+  <!-- Step 2: Parameters -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">⚙️</div>
+      <h2>Step 2 — System Parameters</h2>
+      <span class="card-subtitle">Editable fields update dispatch results</span>
+    </div>
+    <div class="card-body">
+      <div class="params-grid">
+
+        <!-- System sizing -->
+        <div class="params-section">
+          <div class="params-section-title">System Sizing</div>
+
+          <div class="field">
+            <label>PV DC Capacity</label>
+            <div class="field-row">
+              <input type="number" id="p-pv-kw" value="10590" min="0" step="100">
+              <span class="field-unit">kWdc</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Inverter AC Rating</label>
+            <div class="field-row">
+              <input type="number" id="p-inv-kw" value="4980" min="0" step="100">
+              <span class="field-unit">kWac</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Battery Power Rating</label>
+            <div class="field-row">
+              <input type="number" id="p-bat-kw" value="5000" min="0" step="100">
+              <span class="field-unit">kW</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Battery Energy Capacities to Test</label>
+            <div class="battery-chips" id="bat-kwh-chips"></div>
+            <div class="chip-add-row">
+              <input type="number" id="chip-input" placeholder="e.g. 25000" min="0" step="1000">
+              <span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);">kWh</span>
+              <button class="btn-chip-add" id="btn-chip-add">+ Add</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Efficiency factors -->
+        <div class="params-section">
+          <div class="params-section-title">Efficiency Factors</div>
+
+          <div class="field">
+            <label>Inverter Efficiency</label>
+            <div class="field-row">
+              <input type="number" id="p-inv-eff" value="98.0" min="80" max="100" step="0.1">
+              <span class="field-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Battery Charge Efficiency</label>
+            <div class="field-row">
+              <input type="number" id="p-chg-eff" value="91.15" min="70" max="100" step="0.01">
+              <span class="field-unit">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Battery Discharge Efficiency</label>
+            <div class="field-row">
+              <input type="number" id="p-dis-eff" value="98.01" min="70" max="100" step="0.01">
+              <span class="field-unit">%</span>
+            </div>
+          </div>
+
+          <!-- Advanced settings toggle -->
+          <button class="advanced-toggle" id="adv-toggle">
+            <span class="chevron">▲</span>
+            Advanced Settings
+          </button>
+          <div class="advanced-section" id="adv-section">
+            <div class="field">
+              <label>Fixed Aux Load</label>
+              <div class="field-row">
+                <input type="number" id="p-fixed-aux" value="0.10" min="0" max="5" step="0.01">
+                <span class="field-unit">% rated</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Variable Aux Load</label>
+              <div class="field-row">
+                <input type="number" id="p-var-aux" value="2.00" min="0" max="10" step="0.1">
+                <span class="field-unit">% throughput</span>
+              </div>
+            </div>
+            <div class="field" style="margin-top:0.75rem;">
+              <div class="params-section-title" style="margin-bottom:0.6rem;">AC Loss Factors</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;">
+                <div>
+                  <label>No-Load Loss</label>
+                  <div class="field-row">
+                    <input type="number" id="p-noload" value="5.0" min="0" step="0.5">
+                    <span class="field-unit">kW</span>
+                  </div>
+                </div>
+                <div>
+                  <label>MV Transformer Full-Load</label>
+                  <div class="field-row">
+                    <input type="number" id="p-mv-loss" value="37.4" min="0" step="0.1">
+                    <span class="field-unit">kW</span>
+                  </div>
+                </div>
+                <div>
+                  <label>AC Cable Full-Load</label>
+                  <div class="field-row">
+                    <input type="number" id="p-cable-loss" value="36.9" min="0" step="0.1">
+                    <span class="field-unit">kW</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /params-grid -->
+
+      <div class="run-section">
+        <button class="btn-run" id="btn-run" disabled>
+          <div class="spinner"></div>
+          <span class="run-label">▶ Run Dispatch Engine</span>
+        </button>
+        <span class="run-hint" id="run-hint">Upload a PVSyst CSV to enable</span>
+      </div>
+
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">Initializing...</div>
+      </div>
+
+      <div class="error-box" id="run-error"></div>
+    </div>
+  </div>
+
+  <!-- Step 3: Results -->
+  <div id="results-section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon">📊</div>
+        <h2>Step 3 — Dispatch Results</h2>
+        <span class="card-subtitle" id="results-timestamp">—</span>
+      </div>
+      <div class="card-body">
+
+        <!-- Scenario comparison table (shown when >1 battery size) -->
+        <div id="comparison-wrap" style="display:none; margin-bottom:1.25rem;">
+          <div style="margin-bottom:0.5rem;font-size:0.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;">Scenario Comparison</div>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Battery Size</th>
+                <th>Annual Net Gen (MWh)</th>
+                <th>Specific Yield (kWh/kW)</th>
+                <th>Annual Aux (MWh)</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Scenario tabs (shown when >1 battery size) -->
+        <div class="scenario-tabs" id="scenario-tabs"></div>
+
+        <!-- Scenario panels (one per battery size) -->
+        <div id="scenario-panels"></div>
+
+        <!-- Global downloads -->
+        <div class="download-row" style="margin-top:1rem;">
+          <button class="btn-download csv" id="btn-csv">⬇ Download All CSV</button>
+          <button class="btn-download xlsx" id="btn-xlsx">⬇ Download All Excel (.xlsx)</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Built by <span>New Leaf Energy</span> · DC Coupling Dispatch Engine · Confidential
+</footer>
+
+<script>
+// ============================================================
+// DISPATCH ENGINE (TypeScript-style JS — mirrors esmot_app.py)
+// ============================================================
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun',
+                     'Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Date sequence matching PVSyst 1990 base year
+function makeTimestamps(hours) {
+  const start = new Date(1990, 0, 1, 0, 0, 0);
+  const ts = [];
+  for (let i = 0; i < hours; i++) {
+    const d = new Date(start.getTime() + i * 3600000);
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    const yy = String(d.getFullYear()).slice(-2);
+    const hh = String(d.getHours()).padStart(2,'0');
+    ts.push(`${mm}/${dd}/${yy} ${hh}:00`);
+  }
+  return ts;
+}
+
+function getMonth(hourIndex) {
+  // Returns 1-based month for hour index in a non-leap 1990 year
+  const d = new Date(1990, 0, 1, 0, 0, 0);
+  d.setTime(d.getTime() + hourIndex * 3600000);
+  return d.getMonth() + 1;
+}
+
+function applyAcLosses(grossAc, invAcLimit, noLoad, mvFull, cableFull) {
+  const loadFraction = invAcLimit > 0 ? grossAc / invAcLimit : 0;
+  const variableLoss = (mvFull + cableFull) * loadFraction;
+  return grossAc - noLoad - variableLoss;
+}
+
+function runDispatch(pvWatts, params) {
+  const {
+    invAcKw, batKw, batKwh,
+    invEff, chargeEff, dischargeEff,
+    fixedAuxPct, varAuxPct,
+    noLoadLoss, mvFullLoss, cableFullLoss
+  } = params;
+
+  const hours    = pvWatts.length;
+  const invDcLim = invAcKw / invEff;
+
+  const soc          = new Float64Array(hours + 1);
+  const netAc        = new Float64Array(hours);
+  const auxCon       = new Float64Array(hours);
+  const eArrKw       = new Float64Array(hours); // DC array output (kW)
+  const invOutKw     = new Float64Array(hours); // Gross AC at inverter terminals
+  const chargeKwArr  = new Float64Array(hours); // Battery charge power (kW)
+  const dischKwArr   = new Float64Array(hours); // Battery discharge power (kW)
+  const socArr       = new Float64Array(hours); // SOC at start of each hour (kWh)
+
+  for (let i = 0; i < hours; i++) {
+    const dcSolar    = pvWatts[i] / 1000.0; // W -> kW
+    const clippedDc  = Math.max(0, dcSolar - invDcLim);
+    const headroom   = Math.max(0, invDcLim - dcSolar);
+
+    let chargeKw = 0;
+    if (clippedDc > 0 && batKw > 0) {
+      chargeKw = Math.min(
+        clippedDc,
+        batKw,
+        (batKwh - soc[i]) / chargeEff
+      );
+    }
+
+    let dischargeKw = 0;
+    if (headroom > 0 && soc[i] > 0 && batKw > 0 && chargeKw === 0) {
+      dischargeKw = Math.min(headroom, batKw, soc[i] * dischargeEff);
+    }
+
+    soc[i+1] = soc[i] + (chargeKw * chargeEff) - (dischargeKw / dischargeEff);
+
+    const grossAc = Math.min(
+      (dcSolar - chargeKw + dischargeKw) * invEff,
+      invAcKw
+    );
+
+    netAc[i]       = applyAcLosses(grossAc, invAcKw, noLoadLoss, mvFullLoss, cableFullLoss);
+    eArrKw[i]      = dcSolar;
+    invOutKw[i]    = grossAc;
+    chargeKwArr[i] = chargeKw;
+    dischKwArr[i]  = dischargeKw;
+    socArr[i]      = soc[i];       // SOC at start of this hour
+
+    if (batKw > 0) {
+      auxCon[i] = (batKw * fixedAuxPct) + ((chargeKw + dischargeKw) * varAuxPct);
+    }
+  }
+
+  return { netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr };
+}
+
+// ============================================================
+// PVSYST CSV PARSER
+// ============================================================
+
+function parsePVSystCSV(text) {
+  const lines = text.split(/\r?\n/);
+
+  // Find header row starting with 'date'
+  let headerIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim().toLowerCase().startsWith('date')) {
+      headerIdx = i;
+      break;
+    }
+  }
+  if (headerIdx < 0) throw new Error("Could not find 'date' header row in CSV.");
+
+  // Auto-detect delimiter: PVSyst exports use either ',' or ';'
+  const headerLine = lines[headerIdx];
+  const delim = headerLine.includes(';') ? ';' : ',';
+
+  const headers = headerLine.split(delim).map(h => h.trim());
+  const eArrIdx = headers.findIndex(h => h === 'EArrMPP');
+  if (eArrIdx < 0) {
+    throw new Error(`EArrMPP column not found. Available columns: ${headers.join(', ')}`);
+  }
+
+  // Skip units row (headerIdx + 1), read data from headerIdx + 2
+  const dataLines = lines.slice(headerIdx + 2).filter(l => l.trim().length > 0);
+
+  if (dataLines.length !== 8760) {
+    throw new Error(`Expected 8760 data rows, found ${dataLines.length}. Check your PVSyst export.`);
+  }
+
+  const pvWatts = new Float64Array(8760);
+  for (let i = 0; i < 8760; i++) {
+    const cols = dataLines[i].split(delim);
+    pvWatts[i] = parseFloat(cols[eArrIdx]) || 0;
+  }
+
+  return pvWatts;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+
+let pvWatts       = null;
+let allResults    = [];   // array of {batKwh, netAc, auxCon, params}
+let fileName      = '';
+let batKwhSizes   = [20000, 25000, 30000];
+
+// ============================================================
+// BATTERY CHIP MANAGER
+// ============================================================
+
+function renderChips() {
+  const container = document.getElementById('bat-kwh-chips');
+  container.innerHTML = '';
+  batKwhSizes.forEach(kwh => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `${(kwh/1000).toFixed(0)} MWh <button class="chip-remove" data-kwh="${kwh}">×</button>`;
+    container.appendChild(chip);
+  });
+  container.querySelectorAll('.chip-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      batKwhSizes = batKwhSizes.filter(k => k !== parseInt(btn.dataset.kwh));
+      renderChips();
+    });
+  });
+}
+
+document.getElementById('btn-chip-add').addEventListener('click', () => {
+  const val = parseInt(document.getElementById('chip-input').value);
+  if (val > 0 && !batKwhSizes.includes(val)) {
+    batKwhSizes.push(val);
+    batKwhSizes.sort((a,b) => a-b);
+    renderChips();
+    document.getElementById('chip-input').value = '';
+  }
+});
+
+document.getElementById('chip-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btn-chip-add').click();
+});
+
+// Advanced toggle
+document.getElementById('adv-toggle').addEventListener('click', () => {
+  const toggle = document.getElementById('adv-toggle');
+  const section = document.getElementById('adv-section');
+  toggle.classList.toggle('open');
+  section.classList.toggle('open');
+});
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+
+function getParams() {
+  const pct = v => parseFloat(v) / 100;
+  return {
+    pvKw:         parseFloat(document.getElementById('p-pv-kw').value)   || 10590,
+    invAcKw:      parseFloat(document.getElementById('p-inv-kw').value)   || 4980,
+    batKw:        parseFloat(document.getElementById('p-bat-kw').value)   || 5000,
+    invEff:       pct(document.getElementById('p-inv-eff').value),
+    chargeEff:    pct(document.getElementById('p-chg-eff').value),
+    dischargeEff: pct(document.getElementById('p-dis-eff').value),
+    fixedAuxPct:  pct(document.getElementById('p-fixed-aux').value),
+    varAuxPct:    pct(document.getElementById('p-var-aux').value),
+    noLoadLoss:   parseFloat(document.getElementById('p-noload').value)    || 5.0,
+    mvFullLoss:   parseFloat(document.getElementById('p-mv-loss').value)   || 37.4,
+    cableFullLoss:parseFloat(document.getElementById('p-cable-loss').value)|| 36.9,
+  };
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progress-fill').style.width  = pct + '%';
+  document.getElementById('progress-label').textContent = label;
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function hideError(id) {
+  document.getElementById(id).classList.remove('visible');
+}
+
+function fmt(n, dec=1) {
+  return n.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+}
+
+// ============================================================
+// RENDER RESULTS (multi-scenario)
+// ============================================================
+
+function buildScenarioPanel(result, panelId, isActive) {
+  const { netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr, params, batKwh } = result;
+  const annualNet = netAc.reduce((a,b) => a+b, 0);
+  const annualAux = auxCon.reduce((a,b) => a+b, 0);
+  // negHours removed — idle hours stat card removed per design
+  const yieldKwh  = annualNet / params.pvKw;
+
+  const monthly = new Float64Array(12);
+  for (let i = 0; i < 8760; i++) monthly[getMonth(i)-1] += netAc[i];
+  const maxM = Math.max(...monthly);
+
+  const panel = document.createElement('div');
+  panel.className = 'scenario-panel' + (isActive ? ' active' : '');
+  panel.id = panelId;
+
+  // Stats
+  const statsHtml = `
+    <div class="stats-grid" style="margin-bottom:1rem;">
+      <div class="stat-card highlight">
+        <div class="stat-value">${fmt(annualNet/1000)}</div>
+        <div class="stat-label">Annual Net Gen (MWh)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${fmt(yieldKwh)}</div>
+        <div class="stat-label">Specific Yield (kWh/kW)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${fmt(annualAux/1000)}</div>
+        <div class="stat-label">Annual Aux Cons (MWh)</div>
+      </div>
+    </div>`;
+
+  // Chart bars
+  let chartBars = '', chartLabels = '';
+  for (let m = 0; m < 12; m++) {
+    const pct = maxM > 0 ? (monthly[m]/maxM)*100 : 0;
+    chartBars += `<div class="chart-bar-wrap">
+      <div class="chart-bar" style="height:${pct}%">
+        <div class="chart-tooltip">${fmt(monthly[m]/1000)} MWh</div>
+      </div></div>`;
+    chartLabels += `<div class="chart-bar-label">${MONTH_NAMES[m]}</div>`;
+  }
+
+  // Preview rows — includes EArrMPP and InvOut for visibility (preview only, not in download)
+  const ts = makeTimestamps(8760);
+  let previewRows = '';
+  for (let i = 0; i < 100; i++) {
+    const net = netAc[i];
+    previewRows += `<tr>
+      <td>${ts[i]}</td>
+      <td class="num">${getMonth(i)}</td>
+      <td class="num">${Math.round(eArrKw[i])}</td>
+      <td class="num">${Math.round(invOutKw[i])}</td>
+      <td class="num ${net<0?'negative':''}">${Math.round(net)}</td>
+      <td class="num">${Math.round(auxCon[i])}</td>
+    </tr>`;
+  }
+
+  // Build unique IDs for this panel's calendar and chart elements
+  const calId     = `cal-${panelId}`;
+  const canvasId  = `canvas-${panelId}`;
+  const titleId   = `chart-title-${panelId}`;
+
+  panel.innerHTML = statsHtml + `
+    <div style="margin-bottom:.35rem;font-size:.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">Monthly Net Generation</div>
+    <div class="monthly-chart">${chartBars}</div>
+    <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:1.25rem;">${chartLabels}</div>
+
+    <div class="day-explorer">
+      <div class="day-explorer-title">Daily Plant Operations Explorer</div>
+      <div class="explorer-layout">
+        <div class="cal-wrap" id="${calId}"></div>
+        <div class="chart-container">
+          <div class="chart-title">
+            <span id="${titleId}">Select a day to view hourly dispatch</span>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#74C69D;height:2px;"></div>DC Available (kW)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#1B4332;"></div>Net AC Output (kW)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#52B788;border-top:2px dashed #52B788;height:0;"></div>Charging (kW)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:#E67E22;"></div>Discharging (kW)</div>
+            </div>
+          </div>
+          <canvas id="${canvasId}" class="day-chart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.25rem;margin-bottom:.5rem;font-size:.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">
+      8760 Hourly Preview <span style="font-weight:400;color:var(--text-muted);">(first 100 rows · EArrMPP and Inv Output for reference only — not in download)</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Month</th>
+          <th style="text-align:right">EArrMPP (kW)</th>
+          <th style="text-align:right">Inv Output (kW)</th>
+          <th style="text-align:right">Net Gen (kWh)</th>
+          <th style="text-align:right">Aux Cons (kWh)</th>
+        </tr></thead>
+        <tbody>${previewRows}</tbody>
+      </table>
+    </div>`;
+
+  // Wire up the calendar and chart after the panel is in the DOM
+  requestAnimationFrame(() => {
+    initDayExplorer(calId, canvasId, titleId,
+                    netAc, eArrKw, chargeKwArr, dischKwArr, socArr, batKwh);
+  });
+
+  return panel;
+}
+
+// ============================================================
+// DAY EXPLORER — calendar + hourly dispatch chart
+// ============================================================
+
+// PVSyst 1990 base year — day-of-year lookup
+const DAYS_IN_MONTH = [31,28,31,30,31,30,31,31,30,31,30,31];
+const MONTH_START_HOUR = (() => {
+  const starts = [0];
+  for (let m = 0; m < 11; m++) starts.push(starts[m] + DAYS_IN_MONTH[m]*24);
+  return starts;
+})();
+
+function dayOfYearToHourIndex(doy) { return (doy - 1) * 24; } // 1-based doy
+
+function getHourIndex(month1, day) {
+  // month is 1-based, day is 1-based
+  return MONTH_START_HOUR[month1-1] + (day-1)*24;
+}
+
+function drawDayChart(canvas, titleEl, dateLabel,
+                      netAc, eArrKw, chargeKwArr, dischKwArr, batKwh, hourStart) {
+  const ctx = canvas.getContext('2d');
+  const W   = canvas.offsetWidth  * window.devicePixelRatio;
+  const H   = canvas.offsetHeight * window.devicePixelRatio;
+  canvas.width  = W;
+  canvas.height = H;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const cW = canvas.offsetWidth;
+  const cH = canvas.offsetHeight;
+
+  const PAD_L = 58, PAD_R = 14, PAD_T = 14, PAD_B = 32;
+  const plotW = cW - PAD_L - PAD_R;
+  const plotH = cH - PAD_T - PAD_B;
+
+  // Collect 24 hours of data
+  const hours = Array.from({length:24}, (_,h) => {
+    const i = hourStart + h;
+    return {
+      h,
+      dc:    eArrKw[i]      || 0,
+      net:   netAc[i]       || 0,
+      chg:   chargeKwArr[i] || 0,
+      dis:   dischKwArr[i]  || 0,
+    };
+  });
+
+  // Determine y-axis range
+  const allVals = hours.flatMap(d => [d.dc, d.net, d.chg, d.dis, 0]);
+  const yMax = Math.max(...allVals) * 1.08 || 100;
+  const yMin = Math.min(0, Math.min(...hours.map(d=>d.net)));
+
+  const yRange = yMax - yMin;
+  const xStep  = plotW / 23;
+
+  function xPos(h)  { return PAD_L + h * xStep; }
+  function yPos(v)  { return PAD_T + plotH - ((v - yMin) / yRange) * plotH; }
+
+  // ── Background ────────────────────────────────────────────────
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, cW, cH);
+
+  // ── Grid lines ────────────────────────────────────────────────
+  ctx.strokeStyle = '#E8F0EB';
+  ctx.lineWidth   = 1;
+  const yTicks = 5;
+  for (let t = 0; t <= yTicks; t++) {
+    const v = yMin + (yRange / yTicks) * t;
+    const y = yPos(v);
+    ctx.beginPath();
+    ctx.moveTo(PAD_L, y);
+    ctx.lineTo(PAD_L + plotW, y);
+    ctx.stroke();
+    ctx.fillStyle = '#8BAD9A';
+    ctx.font = `${11 * window.devicePixelRatio / window.devicePixelRatio}px DM Mono, monospace`;
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(v).toLocaleString(), PAD_L - 6, y + 4);
+  }
+
+  // ── Zero line ─────────────────────────────────────────────────
+  if (yMin < 0) {
+    ctx.strokeStyle = '#CBD5CE';
+    ctx.lineWidth   = 1;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(PAD_L, yPos(0));
+    ctx.lineTo(PAD_L + plotW, yPos(0));
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // ── DC available — filled area ────────────────────────────────
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), yPos(0));
+  hours.forEach(d => ctx.lineTo(xPos(d.h), yPos(d.dc)));
+  ctx.lineTo(xPos(23), yPos(0));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(116, 198, 157, 0.18)';
+  ctx.fill();
+
+  // DC line
+  ctx.beginPath();
+  ctx.strokeStyle = '#74C69D';
+  ctx.lineWidth   = 2;
+  ctx.lineJoin    = 'round';
+  hours.forEach((d,i) => i===0 ? ctx.moveTo(xPos(d.h), yPos(d.dc))
+                                : ctx.lineTo(xPos(d.h), yPos(d.dc)));
+  ctx.stroke();
+
+  // ── Charging — dashed green ───────────────────────────────────
+  ctx.beginPath();
+  ctx.strokeStyle = '#52B788';
+  ctx.lineWidth   = 2;
+  ctx.setLineDash([5, 3]);
+  let started = false;
+  hours.forEach(d => {
+    if (d.chg > 0.1) {
+      if (!started) { ctx.moveTo(xPos(d.h), yPos(d.chg)); started = true; }
+      else            ctx.lineTo(xPos(d.h), yPos(d.chg));
+    } else {
+      if (started) { ctx.lineTo(xPos(d.h), yPos(0)); started = false; }
+    }
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── Discharging — orange bars ─────────────────────────────────
+  const barW = Math.max(3, xStep * 0.4);
+  hours.forEach(d => {
+    if (d.dis > 0.1) {
+      const x = xPos(d.h) - barW/2;
+      const y = yPos(d.dis);
+      const h = yPos(0) - y;
+      ctx.fillStyle = 'rgba(230, 126, 34, 0.75)';
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(x, y, barW, h, 2) : ctx.rect(x, y, barW, h);
+      ctx.fill();
+    }
+  });
+
+  // ── Net AC — bold dark line ───────────────────────────────────
+  ctx.beginPath();
+  ctx.strokeStyle = '#1B4332';
+  ctx.lineWidth   = 2.5;
+  ctx.lineJoin    = 'round';
+  hours.forEach((d,i) => i===0 ? ctx.moveTo(xPos(d.h), yPos(d.net))
+                                : ctx.lineTo(xPos(d.h), yPos(d.net)));
+  ctx.stroke();
+
+  // ── X-axis labels (every 3 hours) ────────────────────────────
+  ctx.fillStyle  = '#8BAD9A';
+  ctx.textAlign  = 'center';
+  ctx.font       = `11px DM Mono, monospace`;
+  for (let h = 0; h <= 23; h += 3) {
+    ctx.fillText(`${String(h).padStart(2,'0')}:00`, xPos(h), cH - 10);
+  }
+
+  // ── Y-axis label ──────────────────────────────────────────────
+  ctx.save();
+  ctx.translate(13, PAD_T + plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign  = 'center';
+  ctx.fillStyle  = '#4A6859';
+  ctx.font       = '11px DM Sans, sans-serif';
+  ctx.fillText('kW', 0, 0);
+  ctx.restore();
+
+  // ── Title update ──────────────────────────────────────────────
+  if (titleEl) titleEl.textContent = `Hourly Dispatch — ${dateLabel}`;
+}
+
+function buildCalendar(calEl, onSelect, selectedState) {
+  // selectedState = { month: 1-12, day: 1-31 }
+  const month = selectedState.viewMonth; // 1-based
+  const days  = DAYS_IN_MONTH[month-1];
+
+  // Day of week offset for Jan 1 1990 = Monday (dow=1, but grid starts Sunday=0)
+  // Jan 1 1990 was a Monday. Compute offset for this month.
+  let totalDaysBefore = 0;
+  for (let m = 1; m < month; m++) totalDaysBefore += DAYS_IN_MONTH[m-1];
+  const firstDow = (1 + totalDaysBefore) % 7; // 0=Sun, 1=Mon, ...
+
+  calEl.innerHTML = `
+    <div class="cal-nav">
+      <button class="cal-nav-btn" id="cal-prev-${calEl.id}">‹</button>
+      <span class="cal-month-label">${MONTH_NAMES[month-1]} 1990</span>
+      <button class="cal-nav-btn" id="cal-next-${calEl.id}">›</button>
+    </div>
+    <div class="cal-grid">
+      ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+      ${Array(firstDow).fill('<div class="cal-day empty"></div>').join('')}
+      ${Array.from({length:days},(_,i)=>{
+        const d = i+1;
+        const active = selectedState.month===month && selectedState.day===d ? ' active' : '';
+        return `<div class="cal-day${active}" data-d="${d}">${d}</div>`;
+      }).join('')}
+    </div>`;
+
+  calEl.querySelectorAll('.cal-day:not(.empty)').forEach(el => {
+    el.addEventListener('click', () => {
+      const day = parseInt(el.dataset.d);
+      onSelect(month, day);
+    });
+  });
+
+  calEl.querySelector(`#cal-prev-${calEl.id}`).addEventListener('click', () => {
+    if (selectedState.viewMonth > 1) {
+      selectedState.viewMonth--;
+      buildCalendar(calEl, onSelect, selectedState);
+    }
+  });
+
+  calEl.querySelector(`#cal-next-${calEl.id}`).addEventListener('click', () => {
+    if (selectedState.viewMonth < 12) {
+      selectedState.viewMonth++;
+      buildCalendar(calEl, onSelect, selectedState);
+    }
+  });
+}
+
+function initDayExplorer(calId, canvasId, titleId,
+                         netAc, eArrKw, chargeKwArr, dischKwArr, socArr, batKwh) {
+  const calEl    = document.getElementById(calId);
+  const canvas   = document.getElementById(canvasId);
+  const titleEl  = document.getElementById(titleId);
+  if (!calEl || !canvas) return;
+
+  const state = { viewMonth: 7, month: 7, day: 15 }; // default: July 15
+
+  const onSelect = (month, day) => {
+    state.month    = month;
+    state.day      = day;
+    state.viewMonth = month;
+    buildCalendar(calEl, onSelect, state);
+    const hourStart  = getHourIndex(month, day);
+    const dateLabel  = `${MONTH_NAMES[month-1]} ${day}, 1990`;
+    drawDayChart(canvas, titleEl, dateLabel,
+                 netAc, eArrKw, chargeKwArr, dischKwArr, batKwh, hourStart);
+  };
+
+  buildCalendar(calEl, onSelect, state);
+
+  // Draw the default day immediately
+  const hourStart = getHourIndex(state.month, state.day);
+  drawDayChart(canvas, titleEl, `${MONTH_NAMES[state.month-1]} ${state.day}, 1990`,
+               netAc, eArrKw, chargeKwArr, dischKwArr, batKwh, hourStart);
+
+  // Redraw on resize
+  const ro = new ResizeObserver(() => {
+    drawDayChart(canvas, titleEl, `${MONTH_NAMES[state.month-1]} ${state.day}, 1990`,
+                 netAc, eArrKw, chargeKwArr, dischKwArr, batKwh,
+                 getHourIndex(state.month, state.day));
+  });
+  ro.observe(canvas);
+}
+
+function renderAllResults(results, params) {
+  document.getElementById('results-timestamp').textContent =
+    new Date().toLocaleString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+
+  const tabsEl   = document.getElementById('scenario-tabs');
+  const panelsEl = document.getElementById('scenario-panels');
+  const compWrap = document.getElementById('comparison-wrap');
+  const compBody = document.getElementById('comparison-body');
+
+  tabsEl.innerHTML = '';
+  panelsEl.innerHTML = '';
+  compBody.innerHTML = '';
+
+  const multi = results.length > 1;
+  compWrap.style.display = multi ? 'block' : 'none';
+  tabsEl.style.display   = multi ? 'flex'  : 'none';
+
+  // Find best net gen for highlighting
+  const maxNet = Math.max(...results.map(r => r.netAc.reduce((a,b)=>a+b,0)));
+
+  results.forEach((result, idx) => {
+    const { netAc, auxCon, batKwh } = result;
+    const annualNet = netAc.reduce((a,b)=>a+b,0);
+    const annualAux = auxCon.reduce((a,b)=>a+b,0);
+
+    const yld       = annualNet / params.pvKw;
+    const isBest    = Math.abs(annualNet - maxNet) < 1;
+    const label     = `${(batKwh/1000).toFixed(0)} MWh`;
+    const panelId   = `panel-${idx}`;
+
+    // Tab
+    if (multi) {
+      const tab = document.createElement('button');
+      tab.className = 'scenario-tab' + (idx===0?' active':'');
+      tab.textContent = label;
+      tab.dataset.panel = panelId;
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.scenario-tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.scenario-panel').forEach(p=>p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(panelId).classList.add('active');
+      });
+      tabsEl.appendChild(tab);
+    }
+
+    // Comparison row
+    if (multi) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="${isBest?'best':''}">${label}${isBest?' 🏆':''}</td>
+        <td class="${isBest?'best':''}">${fmt(annualNet/1000)}</td>
+        <td class="${isBest?'best':''}">${fmt(yld)}</td>
+        <td>${fmt(annualAux/1000)}</td>`;
+      compBody.appendChild(tr);
+    }
+
+    // Panel
+    const panel = buildScenarioPanel(result, panelId, idx===0);
+    panelsEl.appendChild(panel);
+  });
+
+  document.getElementById('results-section').classList.add('visible');
+  document.getElementById('results-section').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ============================================================
+// DOWNLOADS
+// ============================================================
+
+// ============================================================
+// DM INPUTS SHEET BUILDER — matches reference layout exactly
+// Cols: A=Date B=Month C=Net.Gen D=Aux.Cons E=empty
+//       F=label G=value (project characteristics)
+//       I=label/month J=energy(kWh) K=demand(kW)  (monthly separate service)
+//       M=label/month N=netgen(MWh) O=fraction     (monthly gen distribution)
+//       Q=label S=value                             (common service)
+//       I onwards rows 19-32: DRV/ICAP monthly % table
+// ============================================================
+
+function buildDMInputsSheet(result, params) {
+  const { netAc, auxCon, batKwh } = result;
+  const ts = makeTimestamps(8760);
+
+  // ── Compute summary stats ──────────────────────────────────────
+  const totalNetKwh = netAc.reduce((a,b)=>a+b,0);
+  const totalAuxKwh = auxCon.reduce((a,b)=>a+b,0);
+  const specYield   = totalNetKwh / params.pvKw;
+
+  // Monthly arrays (1-indexed)
+  const mNetKwh = new Float64Array(12);
+  const mAuxKwh = new Float64Array(12);
+  const mAuxMax = new Float64Array(12);
+  for (let i = 0; i < 8760; i++) {
+    const m = getMonth(i) - 1;
+    mNetKwh[m] += netAc[i];
+    mAuxKwh[m] += auxCon[i];
+    if (auxCon[i] > mAuxMax[m]) mAuxMax[m] = auxCon[i];
+  }
+  const avgMonthlyKwh = totalNetKwh / 12;
+  const maxDemandKw   = Math.max(...mAuxMax);
+
+  // ── Build the AOA (array of arrays) — 8761 rows x 19 cols ─────
+  // We use sparse approach: build a map of {row,col} -> value
+  // then convert to AOA. Rows are 0-indexed here, cols 0-indexed (A=0)
+  const cells = {};
+  const set = (r, c, v) => { cells[`${r},${c}`] = v; };
+
+  // ── Row 0 (Excel row 1): Section headers ──────────────────────
+  set(0, 0,  'Date');
+  set(0, 1,  'Month');
+  set(0, 2,  'Net. Gen. (kWh)');
+  set(0, 3,  'Aux. Cons. (kWh)');
+  set(0, 5,  'Project Characteristics and Key Results');
+  set(0, 8,  'Max. Demand and Energy Consumption on a Separate Service');
+  set(0, 12, 'Monthly Distribution of Energy Generation');
+  set(0, 16, 'Max. Annual Demand and Average Monthly Energy Consumption on a Common Service');
+
+  // ── Project characteristics (rows 1-17, cols F/G = 5/6) ───────
+  const chars = [
+    ['PV STC DC Capacity (kW)',                     params.pvKw],
+    ['Inverter AC Power Rating (kW)',                params.invAcKw],
+    ['DC-DC Converter Power Rating (kW)',            params.batKw],
+    ['BoL Usable AC Energy (kWh)',                   batKwh],
+    ['Net Exported Generation (MWh)',                parseFloat((totalNetKwh/1000).toFixed(5))],
+    ['Net Exported Specific Yield (kWh/kW)',         parseFloat(specYield.toFixed(5))],
+    ['Additional Auxiliary Energy Consumption (MWh)',parseFloat((totalAuxKwh/1000).toFixed(5))],
+    ['Number of Equivalent Full Cycles',             0],
+    ['Separate or Common Service',                   'SEPARATE SERVICE'],
+    ['RTE Energy Loss (MWh)',                        0],
+    ['ESS RTE Degradation Rate (%)',                 0.001],
+    ['Clean Peak Credits - PV (credits/year)',       0],
+    ['Clean Peak Credits - ESS (credits/year)',      0],
+    ['DRV Production (MWh)',                         0],
+    ['ICAP II (MWh)',                                0],
+    ['Weighted Avg LMP ($/kWh)',                     0],
+    ['Year Modeled',                                 2025],
+  ];
+  chars.forEach(([label, val], i) => {
+    set(i+1, 5, label);
+    set(i+1, 6, val);
+  });
+
+  // ── Monthly separate service table (rows 1-16, cols I/J/K = 8/9/10) ──
+  set(1, 8,  'Month');
+  set(1, 9,  'Energy (kWh)');
+  set(1, 10, 'Demand (kW)');
+  for (let m = 0; m < 12; m++) {
+    set(m+2, 8,  m+1);
+    set(m+2, 9,  parseFloat(mAuxKwh[m].toFixed(5)));
+    set(m+2, 10, parseFloat(mAuxMax[m].toFixed(5)));
+  }
+  set(14, 8,  'Average');
+  set(14, 9,  parseFloat((totalAuxKwh/12).toFixed(5)));
+  set(14, 10, parseFloat((mAuxMax.reduce((a,b)=>a+b,0)/12).toFixed(5)));
+  set(15, 8,  'Maximum');
+  set(15, 9,  parseFloat(Math.max(...mAuxKwh).toFixed(5)));
+  set(15, 10, parseFloat(maxDemandKw.toFixed(5)));
+  set(16, 8,  'Total');
+  set(16, 9,  parseFloat(totalAuxKwh.toFixed(5)));
+
+  // ── Monthly net gen distribution (rows 1-14, cols M/N/O = 12/13/14) ─
+  set(1, 12, 'Month');
+  set(1, 13, 'Net Gen. (MWh)');
+  set(1, 14, 'Fraction of Total (%)');
+  for (let m = 0; m < 12; m++) {
+    const frac = totalNetKwh > 0 ? mNetKwh[m]/totalNetKwh : 0;
+    set(m+2, 12, m+1);
+    set(m+2, 13, parseFloat((mNetKwh[m]/1000).toFixed(5)));
+    set(m+2, 14, parseFloat(frac.toFixed(5)));
+  }
+  set(14, 12, 'Total');
+  set(14, 13, parseFloat((totalNetKwh/1000).toFixed(5)));
+
+  // ── Common service (rows 1-2, cols Q/S = 16/18) ───────────────
+  set(1, 16, 'Avg. Monthly Energy (kWh)');
+  set(1, 18, 0);
+  set(2, 16, 'Max. Annual Demand (kW)');
+  set(2, 18, parseFloat(maxDemandKw.toFixed(5)));
+
+  // ── DRV/ICAP table (rows 18-31, col I/J/K) ───────────────────
+  set(18, 8, 'Monthly Production Percentage in DRV, ICAP windows');
+  set(19, 8, 'Month');
+  set(19, 9, 'DRV');
+  set(19, 10,'ICAP 2');
+  for (let m = 0; m < 12; m++) {
+    set(20+m, 8,  m+1);
+    set(20+m, 9,  0);
+    set(20+m, 10, 0);
+  }
+
+  // ── Hourly data rows (rows 1-8760, cols A/B/C/D = 0/1/2/3) ───
+  for (let i = 0; i < 8760; i++) {
+    const r = i + 1; // row 1 is header, data starts row 1 (0-indexed)
+    set(r, 0, ts[i]);
+    set(r, 1, getMonth(i));
+    set(r, 2, parseFloat(netAc[i].toFixed(4)));
+    set(r, 3, parseFloat(auxCon[i].toFixed(4)));
+  }
+
+  // ── Convert sparse map to AOA ─────────────────────────────────
+  const ROWS = 8761; // header + 8760 data
+  const COLS = 19;   // A through S
+  const aoa = [];
+  for (let r = 0; r < ROWS; r++) {
+    const row = [];
+    for (let c = 0; c < COLS; c++) {
+      const key = `${r},${c}`;
+      row.push(cells[key] !== undefined ? cells[key] : null);
+    }
+    aoa.push(row);
+  }
+
+  return aoa;
+}
+
+function downloadAllCSV(results) {
+  // One CSV per scenario, zipped into a single download via a simple multi-section file
+  // For simplicity: if 1 result, plain CSV; if multiple, one file with sections
+  const ts = makeTimestamps(8760);
+  let content = '';
+  results.forEach(({batKwh, netAc, auxCon}) => {
+    content += `# Battery Energy: ${batKwh} kWh\n`;
+    content += 'Date,Month,Net. Gen. (kWh),Aux. Cons. (kWh)\n';
+    for (let i = 0; i < 8760; i++) {
+      content += `${ts[i]},${getMonth(i)},${netAc[i].toFixed(4)},${auxCon[i].toFixed(4)}\n`;
+    }
+    content += '\n';
+  });
+  const blob = new Blob([content], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = results.length > 1 ? 'NLE_Dispatch_All_Scenarios.csv' : 'NLE_Dispatch_8760.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadAllXLSX(results, params) {
+  const wb  = XLSX.utils.book_new();
+  const ts  = makeTimestamps(8760);
+
+  // Summary sheet covering all scenarios
+  const summaryRows = [
+    ['NLE DC Coupling Dispatch Engine — Multi-Scenario Summary'],
+    [`Generated: ${new Date().toLocaleString()}`],
+    [],
+    ['System Configuration'],
+    ['PV DC Capacity (kWdc)', params.pvKw],
+    ['Inverter AC Rating (kWac)', params.invAcKw],
+    ['Battery Power (kW)', params.batKw],
+    ['ILR', parseFloat((params.pvKw/params.invAcKw).toFixed(3))],
+    [],
+    ['Scenario Comparison'],
+    ['Battery Energy (kWh)', 'Annual Net Gen (MWh)', 'Specific Yield (kWh/kW)',
+     'Annual Aux (MWh)'],
+  ];
+
+  results.forEach(({batKwh, netAc, auxCon}) => {
+    const annNet = netAc.reduce((a,b)=>a+b,0);
+    const annAux = auxCon.reduce((a,b)=>a+b,0);
+    summaryRows.push([
+      batKwh,
+      parseFloat((annNet/1000).toFixed(2)),
+      parseFloat((annNet/params.pvKw).toFixed(1)),
+      parseFloat((annAux/1000).toFixed(2))
+    ]);
+  });
+
+  summaryRows.push([], ['Monthly Breakdown by Scenario']);
+  const monthHeader = ['Month', ...results.map(r => `${(r.batKwh/1000).toFixed(0)}MWh Net Gen (MWh)`)];
+  summaryRows.push(monthHeader);
+
+  for (let m = 0; m < 12; m++) {
+    const row = [MONTH_NAMES[m]];
+    results.forEach(({netAc}) => {
+      let sum = 0;
+      for (let i = 0; i < 8760; i++) if (getMonth(i)-1===m) sum += netAc[i];
+      row.push(parseFloat((sum/1000).toFixed(2)));
+    });
+    summaryRows.push(row);
+  }
+
+  const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+  wsSummary['!cols'] = [{wch:30}, ...results.map(()=>({wch:20}))];
+  XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+  // One DM Inputs sheet per scenario
+  results.forEach(({batKwh, netAc, auxCon}) => {
+    const sheetName = `${(batKwh/1000).toFixed(0)}MWh`;
+    const data = [['Date','Month','Net. Gen. (kWh)','Aux. Cons. (kWh)']];
+    for (let i = 0; i < 8760; i++) {
+      data.push([ts[i], getMonth(i),
+        parseFloat(netAc[i].toFixed(4)),
+        parseFloat(auxCon[i].toFixed(4))]);
+    }
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols'] = [{wch:16},{wch:8},{wch:16},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  });
+
+  // Add a DM Inputs sheet for each scenario formatted to match the reference layout
+  results.forEach(result => {
+    const sheetLabel = `${(result.batKwh/1000).toFixed(0)}MWh DM Inputs`;
+    const aoa = buildDMInputsSheet(result, params);
+    const ws  = XLSX.utils.aoa_to_sheet(aoa, {dense: false});
+
+    // Column widths (A-S)
+    ws['!cols'] = [
+      {wch:18}, // A Date
+      {wch:7},  // B Month
+      {wch:15}, // C Net Gen
+      {wch:15}, // D Aux Cons
+      {wch:3},  // E empty
+      {wch:42}, // F labels
+      {wch:16}, // G values
+      {wch:3},  // H empty
+      {wch:20}, // I month/label
+      {wch:15}, // J energy
+      {wch:12}, // K demand
+      {wch:3},  // L empty
+      {wch:10}, // M month
+      {wch:16}, // N net gen MWh
+      {wch:18}, // O fraction
+      {wch:3},  // P empty
+      {wch:36}, // Q label
+      {wch:3},  // R empty
+      {wch:14}, // S value
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, sheetLabel);
+  });
+
+  XLSX.writeFile(wb, results.length > 1
+    ? 'NLE_Dispatch_All_Scenarios.xlsx'
+    : 'NLE_Dispatch_8760.xlsx');
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+
+// File input / drag-drop
+const dropzone  = document.getElementById('dropzone');
+const fileInput = document.getElementById('file-input');
+
+dropzone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropzone.classList.add('drag-over');
+});
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+function handleFile(file) {
+  hideError('parse-error');
+  fileName = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      pvWatts = parsePVSystCSV(e.target.result);
+      document.getElementById('file-name').textContent = file.name;
+      document.getElementById('file-meta').textContent =
+        `${pvWatts.length.toLocaleString()} hourly rows · EArrMPP parsed · ` +
+        `Peak: ${Math.round(Math.max(...pvWatts)).toLocaleString()} W`;
+      document.getElementById('file-loaded').classList.add('visible');
+      document.getElementById('btn-run').disabled = false;
+      document.getElementById('run-hint').textContent = 'Ready to run';
+    } catch(err) {
+      showError('parse-error', '⚠ ' + err.message);
+      pvWatts = null;
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Run button
+document.getElementById('btn-run').addEventListener('click', async () => {
+  if (!pvWatts) return;
+  if (batKwhSizes.length === 0) {
+    showError('run-error', '⚠ Add at least one battery energy capacity above.');
+    return;
+  }
+  hideError('run-error');
+
+  const btn = document.getElementById('btn-run');
+  btn.disabled = true;
+  btn.classList.add('running');
+
+  const progWrap = document.getElementById('progress-wrap');
+  progWrap.classList.add('visible');
+
+  try {
+    const p = getParams();
+    allResults = [];
+    const n = batKwhSizes.length;
+
+    for (let s = 0; s < n; s++) {
+      const kwh = batKwhSizes[s];
+      setProgress(Math.round(10 + (s/n)*75),
+        `Running scenario ${s+1}/${n}: ${(kwh/1000).toFixed(0)} MWh battery...`);
+      await new Promise(r => setTimeout(r, 20));
+
+      const { netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr } = runDispatch(pvWatts, {
+        invAcKw:      p.invAcKw,
+        batKw:        p.batKw,
+        batKwh:       kwh,
+        invEff:       p.invEff,
+        chargeEff:    p.chargeEff,
+        dischargeEff: p.dischargeEff,
+        fixedAuxPct:  p.fixedAuxPct,
+        varAuxPct:    p.varAuxPct,
+        noLoadLoss:   p.noLoadLoss,
+        mvFullLoss:   p.mvFullLoss,
+        cableFullLoss:p.cableFullLoss,
+      });
+      allResults.push({ batKwh: kwh, netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr, params: p });
+    }
+
+    setProgress(90, 'Rendering results...');
+    await new Promise(r => setTimeout(r, 20));
+    renderAllResults(allResults, p);
+    setProgress(100, `Complete ✓  (${n} scenario${n>1?'s':''} run)`);
+    setTimeout(() => progWrap.classList.remove('visible'), 1800);
+
+  } catch(err) {
+    showError('run-error', '⚠ Dispatch error: ' + err.message);
+    progWrap.classList.remove('visible');
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('running');
+});
+
+// Downloads
+document.getElementById('btn-csv').addEventListener('click', () => {
+  if (allResults.length) downloadAllCSV(allResults);
+});
+
+document.getElementById('btn-xlsx').addEventListener('click', () => {
+  if (allResults.length) downloadAllXLSX(allResults, allResults[0].params);
+});
+
+// Initialize chips on load
+renderChips();
+</script>
+</body>
+</html>
