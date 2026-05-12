@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NLE Dispatch Engine | New Leaf Energy</title>
+<title>NLE Dispatch Engine v2.0 | New Leaf Energy</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
@@ -1068,6 +1068,779 @@
     main   { padding: 1.5rem 1rem 3rem; }
     .hero h1 { font-size: 1.6rem; }
   }
+
+  /* ── CPEC Styles ── */
+  .cpec-card-inner {
+    background: linear-gradient(135deg, #f0faf4 0%, #e8f5ee 100%);
+    border: 1.5px solid var(--nle-green-lite);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .cpec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .cpec-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cpec-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: var(--nle-green-dark);
+    color: var(--nle-green-pale);
+    padding: 2px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  .cpec-disclaimer {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .cpec-seasons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 700px) {
+    .cpec-seasons-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .cpec-season-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    position: relative;
+  }
+
+  .cpec-season-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .cpec-season-label .season-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .cpec-season-label.spring { color: #5a9e7a; }
+  .cpec-season-label.spring .season-dot { background: #74C69D; }
+  .cpec-season-label.summer { color: #c47d1b; }
+  .cpec-season-label.summer .season-dot { background: #E67E22; }
+  .cpec-season-label.fall   { color: #8b6a3a; }
+  .cpec-season-label.fall   .season-dot { background: #d4a96a; }
+  .cpec-season-label.winter { color: #3a6899; }
+  .cpec-season-label.winter .season-dot { background: #7ab0d4; }
+
+  .cpec-season-dates {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    line-height: 1.4;
+  }
+
+  .cpec-window-row {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    margin-bottom: 0.35rem;
+  }
+
+  .cpec-window-row label {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    width: 36px;
+    flex-shrink: 0;
+  }
+
+  .cpec-time-input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-primary);
+    background: white;
+    outline: none;
+    min-width: 0;
+  }
+
+  .cpec-time-input:focus {
+    border-color: var(--nle-green-mid);
+    box-shadow: 0 0 0 2px rgba(64,145,108,0.12);
+  }
+
+  .cpec-mult-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+  }
+
+  .cpec-mult-row label {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .cpec-mult-input {
+    width: 44px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 5px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-primary);
+    background: white;
+    outline: none;
+    text-align: right;
+  }
+
+  .cpec-mult-input:focus {
+    border-color: var(--nle-green-mid);
+    box-shadow: 0 0 0 2px rgba(64,145,108,0.12);
+  }
+
+  .cpec-pricing-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .cpec-pricing-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cpec-pricing-field label {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .cpec-reset-btn {
+    font-size: 0.72rem;
+    color: var(--nle-green-mid);
+    background: none;
+    border: 1px solid var(--nle-green-lite);
+    border-radius: 5px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-family: var(--sans);
+    margin-left: auto;
+  }
+
+  .cpec-reset-btn:hover {
+    background: var(--nle-green-pale);
+    color: var(--nle-green-dark);
+  }
+
+  /* CPEC Results Panel */
+  .cpec-results {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .cpec-results-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cpec-results-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .cpec-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .cpec-stats-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .cpec-stat {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.85rem 1rem;
+    text-align: center;
+  }
+
+  .cpec-stat.accent {
+    background: var(--nle-green-dark);
+    border-color: var(--nle-green-dark);
+  }
+
+  .cpec-stat.accent .cpec-stat-value { color: white; }
+  .cpec-stat.accent .cpec-stat-label { color: var(--nle-green-lite); }
+
+  .cpec-stat-value {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .cpec-stat-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .cpec-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 0.75rem;
+  }
+
+  .cpec-breakdown-table th {
+    background: var(--nle-green-dark);
+    color: white;
+    padding: 0.5rem 0.85rem;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cpec-breakdown-table th:not(:first-child) { text-align: right; }
+
+  .cpec-breakdown-table td {
+    padding: 0.45rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .cpec-breakdown-table td:not(:first-child) {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  .cpec-breakdown-table tr:nth-child(even) td { background: var(--off-white); }
+  .cpec-breakdown-table tr.total-row td {
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    border-top: 2px solid var(--nle-green-lite);
+    border-bottom: none;
+    background: var(--nle-green-pale);
+  }
+
+  .cpec-note {
+    margin-top: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: #FEF9E7;
+    border: 1px solid #F9E79F;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    color: #7D6608;
+    line-height: 1.5;
+  }
+
+  .cpec-note strong { font-weight: 600; }
+
+  /* ── Program mode selector ── */
+  .program-selector-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .program-selector-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .program-select {
+    flex: 1;
+    max-width: 340px;
+    padding: 0.5rem 0.85rem;
+    border: 1.5px solid var(--nle-green-mid);
+    border-radius: 7px;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--nle-green-dark);
+    background: white;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2340916C' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+  }
+
+  .program-select:focus {
+    border-color: var(--nle-green-dark);
+    box-shadow: 0 0 0 3px rgba(64,145,108,0.12);
+  }
+
+  .program-mode-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  #cpec-config-panel { display: none; }
+  #cpec-config-panel.visible { display: block; }
+
+  /* ── System Peak Multiplier slider ── */
+  .peak-mult-section {
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--border);
+    margin-top: 0.85rem;
+  }
+
+  .peak-mult-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .peak-mult-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--nle-green-mid);
+  }
+
+  .peak-mult-value-badge {
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    background: var(--nle-green-pale);
+    border: 1.5px solid var(--nle-green-lite);
+    border-radius: 6px;
+    padding: 2px 10px;
+    min-width: 56px;
+    text-align: center;
+  }
+
+  input[type="range"]#cpec-peak-pct {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    appearance: none;
+    background: linear-gradient(to right, var(--nle-green-mid) 0%, var(--nle-green-mid) var(--slider-pct,0%), var(--border) var(--slider-pct,0%), var(--border) 100%);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    margin: 0.5rem 0;
+  }
+
+  input[type="range"]#cpec-peak-pct::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--nle-green-dark);
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(27,67,50,0.3);
+    cursor: pointer;
+  }
+
+  input[type="range"]#cpec-peak-pct::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--nle-green-dark);
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(27,67,50,0.3);
+    cursor: pointer;
+  }
+
+  .peak-slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--text-muted);
+  }
+
+  .peak-mult-explain {
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .cpec-stats-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 800px) {
+    .cpec-stats-grid-5 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── Array mode toggle ── */
+  .array-mode-toggle {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+    margin-bottom: 1.25rem;
+  }
+
+  .array-mode-btn {
+    padding: 6px 20px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: var(--sans);
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .array-mode-btn:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .array-mode-btn.active {
+    background: var(--nle-green-dark);
+    color: white;
+  }
+
+  /* ── Multi-array panel ── */
+  #multi-array-panel { display: none; }
+  #multi-array-panel.visible { display: block; }
+  #single-array-panel.hidden { display: none; }
+
+  .multi-array-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+    padding: 0.6rem 0.85rem;
+    background: var(--nle-green-pale);
+    border: 1px solid var(--nle-green-lite);
+    border-radius: 6px;
+  }
+
+  .array-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .array-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+
+  .array-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.65rem 1rem;
+    background: var(--off-white);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .array-card-idx {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--nle-green-dark);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .array-card-filename {
+    flex: 1;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .array-card-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .badge-pvcase {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .badge-pvsyst {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+
+  .array-card-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+
+  .array-card-remove {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 1rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .array-card-remove:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .array-card-params {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .array-param-field {
+    padding: 0.65rem 1rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .array-param-field:last-child {
+    border-right: none;
+  }
+
+  .array-param-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .array-param-input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .array-param-input input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    background: white;
+    outline: none;
+    min-width: 0;
+  }
+
+  .array-param-input input:focus {
+    border-color: var(--nle-green-mid);
+    box-shadow: 0 0 0 2px rgba(64,145,108,0.12);
+  }
+
+  .array-param-input span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .add-array-btn {
+    width: 100%;
+    padding: 0.65rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+
+  .add-array-btn:hover {
+    background: var(--nle-green-pale);
+    border-color: var(--nle-green-lite);
+    color: var(--nle-green-dark);
+  }
+
+  /* Multi-array summary bar */
+  .multi-summary-bar {
+    margin-top: 0.85rem;
+    padding: 0.75rem 1rem;
+    background: var(--nle-green-pale);
+    border: 1px solid var(--nle-green-lite);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .multi-summary-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .multi-summary-val {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--nle-green-dark);
+    font-family: var(--mono);
+    letter-spacing: -0.02em;
+  }
+
+  .multi-summary-lbl {
+    font-size: 0.65rem;
+    color: var(--nle-green-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+
+  .multi-summary-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--nle-green-lite);
+    flex-shrink: 0;
+  }
+
+  .multi-summary-note {
+    flex: 1;
+    font-size: 0.72rem;
+    color: var(--nle-green-mid);
+    font-style: italic;
+    text-align: right;
+  }
+
+  /* Per-array results strip in results panel */
+  .per-array-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .per-array-cell {
+    background: var(--off-white);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+  }
+
+  .per-array-cell-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .per-array-cell-val {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
 </style>
 </head>
 <body>
@@ -1080,45 +1853,97 @@
       <div class="logo-sub">DC Coupling Dispatch Engine</div>
     </div>
   </div>
-  <div class="header-badge">v1.0 · ESMOT</div>
+  <div class="header-badge">v2.0 · ESMOT</div>
 </header>
 
 <main>
 
   <!-- Hero -->
   <div class="hero">
-    <div class="hero-tag">Energy Storage Dispatch Tool</div>
+    <div class="hero-tag">Energy Storage Dispatch Tool · v2.0</div>
     <h1>PV+Storage 8760 Generator</h1>
-    <p>Upload a PVSyst hourly export, configure your system, and receive a complete DC-coupled dispatch profile — ready for your financial model.</p>
+    <p>Upload a PVSyst or PVCase hourly export, configure your system, and receive a complete DC-coupled dispatch profile — ready for your financial model.</p>
   </div>
 
   <!-- Step 1: Upload -->
   <div class="card">
     <div class="card-header">
       <div class="card-header-icon">📂</div>
-      <h2>Step 1 — Upload PVSyst 8760 CSV</h2>
+      <h2>Step 1 — Upload 8760 CSV</h2>
     </div>
     <div class="card-body">
-      <div class="dropzone" id="dropzone">
-        <input type="file" id="file-input" accept=".csv">
-        <span class="dropzone-icon">☁️</span>
-        <h3>Drag & drop your PVSyst export</h3>
-        <p>or click to browse your files</p>
-        <span class="file-type">.CSV</span>
+
+      <!-- Mode toggle -->
+      <div class="array-mode-toggle">
+        <button class="array-mode-btn active" id="mode-btn-single" onclick="setArrayMode('single')">Single array</button>
+        <button class="array-mode-btn" id="mode-btn-multi" onclick="setArrayMode('multi')">Multiple arrays</button>
       </div>
-      <div class="file-loaded" id="file-loaded">
-        <div class="file-loaded-icon">✓</div>
-        <div>
-          <div class="file-loaded-name" id="file-name">—</div>
-          <div class="file-loaded-meta" id="file-meta">—</div>
+
+      <!-- ── Single array panel ── -->
+      <div id="single-array-panel">
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="file-input" accept=".csv">
+          <span class="dropzone-icon">☁️</span>
+          <h3>Drag & drop your 8760 hourly export</h3>
+          <p>PVSyst CSV export <strong>or</strong> PVCase hourly CSV — auto-detected</p>
+          <span class="file-type">.CSV</span>
+        </div>
+        <div class="file-loaded" id="file-loaded">
+          <div class="file-loaded-icon">✓</div>
+          <div>
+            <div class="file-loaded-name" id="file-name">—</div>
+            <div class="file-loaded-meta" id="file-meta">—</div>
+          </div>
         </div>
       </div>
+
+      <!-- ── Multi-array panel ── -->
+      <div id="multi-array-panel">
+        <div class="multi-array-hint">
+          Each array runs its own independent dispatch cycle. Results are summed hourly after dispatch.
+          Set AC limit and battery sizing per array — these represent each array's share of the plant.
+        </div>
+
+        <div class="array-cards-list" id="array-cards-list">
+          <!-- populated by JS -->
+        </div>
+
+        <button class="add-array-btn" onclick="document.getElementById('multi-file-input').click()">
+          <input type="file" id="multi-file-input" accept=".csv" style="display:none">
+          <span style="font-size:1.1rem;line-height:1">+</span>
+          Add array CSV
+        </button>
+
+        <div class="multi-summary-bar" id="multi-summary-bar" style="display:none">
+          <div class="multi-summary-stat">
+            <span class="multi-summary-val" id="ms-count">0</span>
+            <span class="multi-summary-lbl">arrays</span>
+          </div>
+          <div class="multi-summary-divider"></div>
+          <div class="multi-summary-stat">
+            <span class="multi-summary-val" id="ms-dc">—</span>
+            <span class="multi-summary-lbl">total kWp DC</span>
+          </div>
+          <div class="multi-summary-divider"></div>
+          <div class="multi-summary-stat">
+            <span class="multi-summary-val" id="ms-ac">—</span>
+            <span class="multi-summary-lbl">total kW AC</span>
+          </div>
+          <div class="multi-summary-divider"></div>
+          <div class="multi-summary-stat">
+            <span class="multi-summary-val" id="ms-kwh">—</span>
+            <span class="multi-summary-lbl">scenarios (cartesian)</span>
+          </div>
+          <span class="multi-summary-note">each array dispatched independently → outputs summed per combination</span>
+        </div>
+      </div>
+
       <div class="error-box" id="parse-error"></div>
     </div>
   </div>
 
   <!-- Step 2: Parameters -->
-  <div class="card">
+  <div id="step2-single-card" class="card">
     <div class="card-header">
       <div class="card-header-icon">⚙️</div>
       <h2>Step 2 — System Parameters</h2>
@@ -1244,7 +2069,182 @@
         </div>
 
       </div><!-- /params-grid -->
+    </div>
+  </div>
 
+  <!-- Step 2 (multi-array mode): one params card per array + shared efficiency -->
+  <div id="step2-multi-container" style="display:none;"></div>
+
+  <!-- Step 2b: Program Mode + CPEC Configuration -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📜</div>
+      <h2>Step 2b — Compensation Program</h2>
+      <span class="card-subtitle">Optional revenue module</span>
+    </div>
+    <div class="card-body">
+
+      <!-- Program selector -->
+      <div class="program-selector-row">
+        <span class="program-selector-label">State Dispatch Program</span>
+        <select class="program-select" id="program-mode">
+          <option value="none">Standard Clipping Recapture (no program)</option>
+          <option value="cpec">MA Clean Peak Program (225 CMR 21.00)</option>
+        </select>
+        <span class="program-mode-note" id="program-mode-note">No CPEC calculations will be shown in results.</span>
+      </div>
+
+      <!-- CPEC config panel — hidden until MA Clean Peak is selected -->
+      <div id="cpec-config-panel">
+        <div class="cpec-card-inner">
+          <div class="cpec-header">
+            <div class="cpec-title">
+              Seasonal Peak Windows
+              <span class="cpec-badge">225 CMR 21.05(3)–(6)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+              <span class="cpec-disclaimer">Business days only · net AC output (MWh) × seasonal multiplier</span>
+              <button class="cpec-reset-btn" id="cpec-reset">↺ Reset to Regulation Defaults</button>
+            </div>
+          </div>
+
+          <div class="cpec-seasons-grid">
+            <!-- Spring -->
+            <div class="cpec-season-box">
+              <div class="cpec-season-label spring"><span class="season-dot"></span>Spring</div>
+              <div class="cpec-season-dates">Mar 1 – May 14</div>
+              <div class="cpec-window-row">
+                <label>Start</label>
+                <input class="cpec-time-input" type="number" id="cpec-spr-start" value="17" min="0" max="23" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-window-row">
+                <label>End</label>
+                <input class="cpec-time-input" type="number" id="cpec-spr-end" value="21" min="1" max="24" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-mult-row">
+                <label>Seasonal multiplier</label>
+                <input class="cpec-mult-input" type="number" id="cpec-spr-mult" value="1" min="0.01" step="0.5">
+                <span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);">×</span>
+              </div>
+            </div>
+            <!-- Summer -->
+            <div class="cpec-season-box">
+              <div class="cpec-season-label summer"><span class="season-dot"></span>Summer</div>
+              <div class="cpec-season-dates">May 15 – Sep 14</div>
+              <div class="cpec-window-row">
+                <label>Start</label>
+                <input class="cpec-time-input" type="number" id="cpec-sum-start" value="16" min="0" max="23" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-window-row">
+                <label>End</label>
+                <input class="cpec-time-input" type="number" id="cpec-sum-end" value="20" min="1" max="24" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-mult-row">
+                <label>Seasonal multiplier</label>
+                <input class="cpec-mult-input" type="number" id="cpec-sum-mult" value="4" min="0.01" step="0.5">
+                <span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);">×</span>
+              </div>
+            </div>
+            <!-- Fall -->
+            <div class="cpec-season-box">
+              <div class="cpec-season-label fall"><span class="season-dot"></span>Fall</div>
+              <div class="cpec-season-dates">Sep 15 – Nov 30</div>
+              <div class="cpec-window-row">
+                <label>Start</label>
+                <input class="cpec-time-input" type="number" id="cpec-fal-start" value="16" min="0" max="23" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-window-row">
+                <label>End</label>
+                <input class="cpec-time-input" type="number" id="cpec-fal-end" value="20" min="1" max="24" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-mult-row">
+                <label>Seasonal multiplier</label>
+                <input class="cpec-mult-input" type="number" id="cpec-fal-mult" value="1" min="0.01" step="0.5">
+                <span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);">×</span>
+              </div>
+            </div>
+            <!-- Winter -->
+            <div class="cpec-season-box">
+              <div class="cpec-season-label winter"><span class="season-dot"></span>Winter</div>
+              <div class="cpec-season-dates">Dec 1 – Feb 28</div>
+              <div class="cpec-window-row">
+                <label>Start</label>
+                <input class="cpec-time-input" type="number" id="cpec-win-start" value="16" min="0" max="23" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-window-row">
+                <label>End</label>
+                <input class="cpec-time-input" type="number" id="cpec-win-end" value="20" min="1" max="24" step="1">
+                <span style="font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);">hr</span>
+              </div>
+              <div class="cpec-mult-row">
+                <label>Seasonal multiplier</label>
+                <input class="cpec-mult-input" type="number" id="cpec-win-mult" value="4" min="0.01" step="0.5">
+                <span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);">×</span>
+              </div>
+            </div>
+          </div><!-- /seasons-grid -->
+
+          <!-- System Peak Multiplier slider -->
+          <div class="peak-mult-section">
+            <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--nle-green-mid);margin-bottom:0.6rem;">
+              Actual Monthly System Peak Multiplier (25×) — 225 CMR 21.05(6)(b)
+            </div>
+            <div class="peak-mult-header">
+              <div>
+                <div class="peak-mult-explain">
+                  The regulation awards an additional <strong>25× multiplier</strong> on output during the one hour per month when ISO-NE grid demand peaks. This hour is not deterministic from a PVSyst file, but historical ISO-NE data shows it falls within the Clean Peak window at high frequency. Use the slider to set what percentage of the 12 monthly peak hours you assume the system captures — the 25× bonus is applied proportionally across all months.
+                </div>
+              </div>
+              <div style="text-align:center;flex-shrink:0;">
+                <div class="peak-mult-value-badge" id="peak-pct-badge">100%</div>
+                <div style="font-size:0.62rem;color:var(--text-muted);margin-top:3px;">capture rate</div>
+              </div>
+            </div>
+            <input type="range" id="cpec-peak-pct" min="0" max="100" value="100" step="5">
+            <div class="peak-slider-labels">
+              <span>0% — never in window</span>
+              <span>50%</span>
+              <span>100% — always in window</span>
+            </div>
+            <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--text-muted);font-style:italic;">
+              At <span id="peak-pct-inline">100%</span>: the tool adds <span id="peak-cpec-explain">all 12 monthly peak-hour bonuses</span>. Each bonus = net AC output in that peak hour × seasonal mult × 25.
+            </div>
+          </div>
+
+          <!-- Pricing row -->
+          <div style="padding-top:0.85rem;border-top:1px dashed var(--border);margin-top:0.85rem;">
+            <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--nle-green-mid);margin-bottom:0.6rem;">Revenue Assumption</div>
+            <div class="cpec-pricing-row">
+              <div class="cpec-pricing-field">
+                <label>CPEC Price</label>
+                <div class="field-row" style="max-width:140px;">
+                  <span class="field-unit" style="border-left:none;border-right:1px solid var(--border);">$</span>
+                  <input type="number" id="cpec-price" value="65" min="0" step="1" style="font-family:var(--mono);font-size:0.85rem;">
+                  <span class="field-unit">/ CPEC</span>
+                </div>
+              </div>
+              <div style="font-size:0.72rem;color:var(--text-muted);font-style:italic;">
+                ACP rate 2026–2032: $65/CPEC · Adjust to reflect contracted or market price
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /cpec-card-inner -->
+      </div><!-- /cpec-config-panel -->
+
+    </div>
+  </div>
+
+  <!-- Run button -->
+  <div class="card">
+    <div class="card-body">
       <div class="run-section">
         <button class="btn-run" id="btn-run" disabled>
           <div class="spinner"></div>
@@ -1252,14 +2252,12 @@
         </button>
         <span class="run-hint" id="run-hint">Upload a PVSyst CSV to enable</span>
       </div>
-
       <div class="progress-wrap" id="progress-wrap">
         <div class="progress-bar-track">
           <div class="progress-bar-fill" id="progress-fill"></div>
         </div>
         <div class="progress-label" id="progress-label">Initializing...</div>
       </div>
-
       <div class="error-box" id="run-error"></div>
     </div>
   </div>
@@ -1309,7 +2307,7 @@
 </main>
 
 <footer>
-  Built by <span>New Leaf Energy</span> · DC Coupling Dispatch Engine · Confidential
+  Built by <span>New Leaf Energy</span> · DC Coupling Dispatch Engine v2.0 · Confidential
 </footer>
 
 <script>
@@ -1413,9 +2411,31 @@ function runDispatch(pvWatts, params) {
 // PVSYST CSV PARSER
 // ============================================================
 
-function parsePVSystCSV(text) {
+// ============================================================
+// UNIFIED CSV PARSER — auto-detects PVSyst or PVCase format
+// ============================================================
+
+// PVCase column name for DC array power (kW) — needs *1000 to get W
+const PVCASE_DC_COL = 'Effective DC power output (kW)';
+
+// Returns { pvWatts: Float64Array(8760), format: 'pvsyst'|'pvcase', meta: {} }
+function parseEnergyCSV(text) {
   const lines = text.split(/\r?\n/);
 
+  // ── Detect format ────────────────────────────────────────────
+  // PVCase files begin with metadata rows like "Layout,..." or "Layout\t..."
+  // PVSyst files begin (or quickly reach) a row starting with 'date'
+  const firstNonEmpty = lines.find(l => l.trim().length > 0) || '';
+  const looksLikePVCase = /^(Layout|Version|Date|Project name|Number|Location)[,\t]/i.test(firstNonEmpty);
+
+  if (looksLikePVCase) {
+    return parsePVCaseCSV(lines);
+  } else {
+    return parsePVSystCSV(lines);
+  }
+}
+
+function parsePVSystCSV(lines) {
   // Find header row starting with 'date'
   let headerIdx = -1;
   for (let i = 0; i < lines.length; i++) {
@@ -1424,20 +2444,28 @@ function parsePVSystCSV(text) {
       break;
     }
   }
-  if (headerIdx < 0) throw new Error("Could not find 'date' header row in CSV.");
+  if (headerIdx < 0) throw new Error("Could not find 'date' header row in CSV. Expected PVSyst or PVCase format.");
 
-  // Auto-detect delimiter: PVSyst exports use either ',' or ';'
+  // Auto-detect delimiter
   const headerLine = lines[headerIdx];
   const delim = headerLine.includes(';') ? ';' : ',';
 
   const headers = headerLine.split(delim).map(h => h.trim());
   const eArrIdx = headers.findIndex(h => h === 'EArrMPP');
   if (eArrIdx < 0) {
-    throw new Error(`EArrMPP column not found. Available columns: ${headers.join(', ')}`);
+    throw new Error(`EArrMPP column not found. Available columns: ${headers.slice(0,8).join(', ')}…`);
   }
 
-  // Skip units row (headerIdx + 1), read data from headerIdx + 2
-  const dataLines = lines.slice(headerIdx + 2).filter(l => l.trim().length > 0);
+  // Skip units row (headerIdx + 1), then skip any additional blank rows
+  // before data. Some PVSyst versions insert a blank spacer line here.
+  // A data row starts with a digit (date token).
+  let dataStart = headerIdx + 2;
+  while (dataStart < lines.length) {
+    const s = lines[dataStart].trim();
+    if (s.length > 0 && /^\d/.test(s)) break;
+    dataStart++;
+  }
+  const dataLines = lines.slice(dataStart).filter(l => l.trim().length > 0);
 
   if (dataLines.length !== 8760) {
     throw new Error(`Expected 8760 data rows, found ${dataLines.length}. Check your PVSyst export.`);
@@ -1449,7 +2477,66 @@ function parsePVSystCSV(text) {
     pvWatts[i] = parseFloat(cols[eArrIdx]) || 0;
   }
 
-  return pvWatts;
+  return { pvWatts, format: 'pvsyst', meta: {} };
+}
+
+function parsePVCaseCSV(lines) {
+  // ── Find the data header row ───────────────────────────────────
+  // PVCase header row starts with "Time Interval Label..."
+  // It may appear after a variable number of metadata rows.
+  // The delimiter may be tab OR comma depending on export settings.
+  let dataHeaderIdx = -1;
+  let delim = ','; // default, will be confirmed from header row
+
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trimStart().startsWith('Time Interval Label')) {
+      dataHeaderIdx = i;
+      // Detect delimiter from this row
+      delim = lines[i].includes('\t') ? '\t' : ',';
+      break;
+    }
+  }
+
+  if (dataHeaderIdx < 0) {
+    throw new Error('PVCase format detected but could not find data header row. Expected row starting with "Time Interval Label".');
+  }
+
+  // ── Extract metadata from rows before the header ──────────────
+  const meta = {};
+  for (let i = 0; i < dataHeaderIdx; i++) {
+    const line = lines[i];
+    if (!line.trim()) continue;
+    // Split on the detected delimiter; first col = key, second = value
+    const parts = line.split(delim);
+    if (parts.length >= 2 && parts[0].trim()) {
+      meta[parts[0].trim()] = parts[1].trim().replace(/^"|"$/g, '');
+    }
+  }
+
+  const headers = lines[dataHeaderIdx].split(delim).map(h => h.trim());
+
+  // Find the DC power column
+  const dcColIdx = headers.findIndex(h => h === PVCASE_DC_COL);
+  if (dcColIdx < 0) {
+    throw new Error(`PVCase: "${PVCASE_DC_COL}" column not found. Available: ${headers.slice(0,10).join(', ')}…`);
+  }
+
+  // PVCase has no units row — data starts immediately after the header
+  const dataLines = lines.slice(dataHeaderIdx + 1).filter(l => l.trim().length > 0);
+
+  if (dataLines.length !== 8760) {
+    throw new Error(`Expected 8760 data rows, found ${dataLines.length}. Check your PVCase export (must be full 8760-hour annual run).`);
+  }
+
+  // Convert: DC power (kW) × 1000 → Watts, floor at 0 (ignore night parasitic negatives)
+  const pvWatts = new Float64Array(8760);
+  for (let i = 0; i < 8760; i++) {
+    const cols = dataLines[i].split(delim);
+    const dcKw = parseFloat(cols[dcColIdx]) || 0;
+    pvWatts[i] = Math.max(0, dcKw * 1000);
+  }
+
+  return { pvWatts, format: 'pvcase', meta };
 }
 
 // ============================================================
@@ -1460,6 +2547,381 @@ let pvWatts       = null;
 let allResults    = [];   // array of {batKwh, netAc, auxCon, params}
 let fileName      = '';
 let batKwhSizes   = [20000, 25000, 30000];
+
+// ============================================================
+// CPEC ENGINE — 225 CMR 21.00 (MA Clean Peak Standard)
+// ============================================================
+
+// PVSyst uses 1990 as its base year. Jan 1 1990 = Monday (dow index 1).
+// We need to know day-of-week for each of the 8760 hours.
+
+// Precompute day-of-week (0=Sun..6=Sat) for each hour of the 1990 base year.
+// Jan 1 1990 was a Monday = dow 1.
+const HOUR_DOW = new Uint8Array(8760);
+(function() {
+  let dow = 1; // Monday
+  let hourInDay = 0;
+  for (let i = 0; i < 8760; i++) {
+    HOUR_DOW[i] = dow;
+    hourInDay++;
+    if (hourInDay === 24) { hourInDay = 0; dow = (dow + 1) % 7; }
+  }
+})();
+
+// Determine Clean Peak Season for a given hour.
+// Returns 'spring' | 'summer' | 'fall' | 'winter' | null
+// Season date boundaries per 225 CMR 21.05(3):
+//   Spring: Mar 1 – May 14   (doy 60–134 in non-leap year)
+//   Summer: May 15 – Sep 14  (doy 135–257)
+//   Fall:   Sep 15 – Nov 30  (doy 258–334)
+//   Winter: Dec 1 – Feb 28   (doy 335–365 + doy 1–59)
+//   (doy = day of year, 1-based, using 1990 which is not a leap year)
+
+const HOUR_DOY = new Uint16Array(8760);  // 1-based day of year
+(function() {
+  const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
+  let doy = 1, hourInDay = 0;
+  for (let i = 0; i < 8760; i++) {
+    HOUR_DOY[i] = doy;
+    hourInDay++;
+    if (hourInDay === 24) {
+      hourInDay = 0;
+      doy++;
+    }
+  }
+})();
+
+function getCpecSeason(hourIndex) {
+  const doy = HOUR_DOY[hourIndex];
+  if (doy >= 60  && doy <= 134) return 'spring';  // Mar 1 – May 14
+  if (doy >= 135 && doy <= 257) return 'summer';  // May 15 – Sep 14
+  if (doy >= 258 && doy <= 334) return 'fall';    // Sep 15 – Nov 30
+  // Winter: doy 1-59 (Jan-Feb) or doy 335-365 (Dec)
+  return 'winter';
+}
+
+function isBusinessDay(hourIndex) {
+  const dow = HOUR_DOW[hourIndex];
+  return dow >= 1 && dow <= 5; // Mon=1 ... Fri=5
+}
+
+function getCpecParams() {
+  return {
+    spring: {
+      start: parseInt(document.getElementById('cpec-spr-start').value) || 17,
+      end:   parseInt(document.getElementById('cpec-spr-end').value)   || 21,
+      mult:  parseFloat(document.getElementById('cpec-spr-mult').value) || 1,
+    },
+    summer: {
+      start: parseInt(document.getElementById('cpec-sum-start').value) || 16,
+      end:   parseInt(document.getElementById('cpec-sum-end').value)   || 20,
+      mult:  parseFloat(document.getElementById('cpec-sum-mult').value) || 4,
+    },
+    fall: {
+      start: parseInt(document.getElementById('cpec-fal-start').value) || 16,
+      end:   parseInt(document.getElementById('cpec-fal-end').value)   || 20,
+      mult:  parseFloat(document.getElementById('cpec-fal-mult').value) || 1,
+    },
+    winter: {
+      start: parseInt(document.getElementById('cpec-win-start').value) || 16,
+      end:   parseInt(document.getElementById('cpec-win-end').value)   || 20,
+      mult:  parseFloat(document.getElementById('cpec-win-mult').value) || 4,
+    },
+    pricePerCpec:   parseFloat(document.getElementById('cpec-price').value) || 65,
+    peakCapturePct: parseFloat(document.getElementById('cpec-peak-pct').value) / 100 || 1.0,
+  };
+}
+
+// Main CPEC calculation function.
+// Returns: { totalCpecs, baseCpecs, peakBonusCpecs, annualRevenue, bySeason, pricePerCpec, peakCapturePct }
+function calcCpecs(netAc, cpecParams) {
+  const seasonNames = ['spring','summer','fall','winter'];
+  const seasons = cpecParams;
+  const peakCapturePct = cpecParams.peakCapturePct; // 0–1
+
+  // ── SYSTEM PEAK MULTIPLIER (25×) ──────────────────────────────
+  // Per 225 CMR 21.05(6)(b): 25× bonus on output during the Hour of
+  // Actual Monthly System Peak in each month (12 hours/year).
+  // We don't know which hour that is from PVSyst data, so we apply it
+  // probabilistically: for each of the 12 months, we find the hour
+  // within the Clean Peak window that has the highest net AC output
+  // (the most likely candidate for system peak). We then apply the
+  // 25× bonus scaled by the user's peak capture percentage.
+  //
+  // CPECs from system peak hour (per month):
+  //   netMwh_of_peak_hour × seasonal_mult × 25 × peakCapturePct
+  //
+  // This is equivalent to: the user asserts that peakCapturePct% of
+  // months the ISO-NE peak falls in their window at that output level.
+
+  // Find the best qualifying hour per month
+  const monthBestHour = new Array(12).fill(null).map(() => ({
+    netMwh: 0, season: null, mult: 0
+  }));
+
+  for (let i = 0; i < 8760; i++) {
+    if (!isBusinessDay(i)) continue;
+    const season = getCpecSeason(i);
+    const sp = seasons[season];
+    const hourOfDay = i % 24;
+    if (hourOfDay < sp.start || hourOfDay >= sp.end) continue;
+    const netMwh = Math.max(0, netAc[i]) / 1000;
+    const month = getMonth(i) - 1;
+    if (netMwh > monthBestHour[month].netMwh) {
+      monthBestHour[month] = { netMwh, season, mult: sp.mult };
+    }
+  }
+
+  // Compute system peak bonus CPECs (fractional, per capture %)
+  let peakBonusCpecs = 0;
+  const SYSTEM_PEAK_MULTIPLIER = 25;
+  monthBestHour.forEach(best => {
+    if (best.season !== null) {
+      peakBonusCpecs += best.netMwh * best.mult * SYSTEM_PEAK_MULTIPLIER * peakCapturePct;
+    }
+  });
+
+  // ── SEASONAL PEAK WINDOW CPECs ────────────────────────────────
+  // Accumulate by season and month
+  const bySeason = {};
+  seasonNames.forEach(s => {
+    bySeason[s] = {
+      mwhInWindow: 0,
+      cpecs: 0,
+      peakHours: 0,
+      byMonth: new Array(12).fill(0).map(() => ({ mwh: 0, cpecs: 0, hours: 0 })),
+    };
+  });
+
+  for (let i = 0; i < 8760; i++) {
+    if (!isBusinessDay(i)) continue;
+    const season = getCpecSeason(i);
+    const sp     = seasons[season];
+    const hourOfDay = i % 24;
+    if (hourOfDay < sp.start || hourOfDay >= sp.end) continue;
+
+    const netMwh = Math.max(0, netAc[i]) / 1000;
+    const cpecs  = netMwh * sp.mult;
+    const month  = getMonth(i) - 1;
+
+    bySeason[season].mwhInWindow += netMwh;
+    bySeason[season].cpecs       += cpecs;
+    bySeason[season].peakHours   += 1;
+    bySeason[season].byMonth[month].mwh   += netMwh;
+    bySeason[season].byMonth[month].cpecs += cpecs;
+    bySeason[season].byMonth[month].hours += 1;
+  }
+
+  let baseCpecs = 0;
+  seasonNames.forEach(s => { baseCpecs += bySeason[s].cpecs; });
+  const totalCpecs  = baseCpecs + peakBonusCpecs;
+  const annualRevenue = totalCpecs * seasons.pricePerCpec;
+
+  return { totalCpecs, baseCpecs, peakBonusCpecs, annualRevenue, bySeason,
+           pricePerCpec: seasons.pricePerCpec, peakCapturePct, monthBestHour };
+}
+
+function buildPerArrayStrip(perArrayStats) {
+  const cells = perArrayStats.map((a, idx) => `
+    <div class="per-array-cell">
+      <div class="per-array-cell-label">Array ${idx + 1} — ${a.filename.replace(/\.csv$/i, '')}</div>
+      <div class="per-array-cell-val">${fmt(a.annualNetMwh)} MWh</div>
+      <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">
+        AC limit ${a.invAcKw.toLocaleString()} kW · ${(a.batKwh / 1000).toFixed(0)} MWh bat
+        · aux ${fmt(a.annualAuxMwh)} MWh
+      </div>
+    </div>`).join('');
+
+  return `
+    <div style="margin-bottom:0.85rem;">
+      <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-secondary);margin-bottom:0.5rem;">
+        Per-array dispatch breakdown — outputs summed below
+      </div>
+      <div class="per-array-strip">${cells}</div>
+    </div>`;
+}
+
+function buildCpecResultsHtml(cpecResult) {
+  const { totalCpecs, baseCpecs, peakBonusCpecs, annualRevenue, bySeason, pricePerCpec, peakCapturePct } = cpecResult;
+  const capturePctDisplay = Math.round(peakCapturePct * 100);
+
+  const seasonConfig = [
+    { key: 'spring', label: 'Spring', color: '#74C69D', dateRange: 'Mar 1 – May 14' },
+    { key: 'summer', label: 'Summer', color: '#E67E22', dateRange: 'May 15 – Sep 14' },
+    { key: 'fall',   label: 'Fall',   color: '#d4a96a', dateRange: 'Sep 15 – Nov 30' },
+    { key: 'winter', label: 'Winter', color: '#7ab0d4', dateRange: 'Dec 1 – Feb 28'  },
+  ];
+
+  // Build monthly breakdown rows
+  let monthRowsHtml = '';
+  const monthTotals = new Array(12).fill(0).map(() => ({ mwh: 0, cpecs: 0 }));
+  const seasonTotals = {};
+  seasonConfig.forEach(sc => { seasonTotals[sc.key] = { mwh: 0, cpecs: 0 }; });
+
+  for (let m = 0; m < 12; m++) {
+    let rowHtml = `<tr><td><strong>${MONTH_NAMES[m]}</strong></td>`;
+    seasonConfig.forEach(sc => {
+      const d = bySeason[sc.key].byMonth[m];
+      if (d.mwh > 0.001) {
+        rowHtml += `<td>${d.mwh.toFixed(2)}</td><td>${d.cpecs.toFixed(1)}</td>`;
+        monthTotals[m].mwh   += d.mwh;
+        monthTotals[m].cpecs += d.cpecs;
+        seasonTotals[sc.key].mwh   += d.mwh;
+        seasonTotals[sc.key].cpecs += d.cpecs;
+      } else {
+        rowHtml += `<td style="color:var(--text-muted)">—</td><td style="color:var(--text-muted)">—</td>`;
+      }
+    });
+    rowHtml += `<td>${monthTotals[m].mwh.toFixed(2)}</td><td>${monthTotals[m].cpecs.toFixed(1)}</td></tr>`;
+    monthRowsHtml += rowHtml;
+  }
+
+  // Season totals row
+  let totRowHtml = `<tr class="total-row"><td>BASE TOTAL</td>`;
+  seasonConfig.forEach(sc => {
+    totRowHtml += `<td>${seasonTotals[sc.key].mwh.toFixed(2)}</td><td>${seasonTotals[sc.key].cpecs.toFixed(1)}</td>`;
+  });
+  const grandMwh = seasonConfig.reduce((s,sc) => s + seasonTotals[sc.key].mwh, 0);
+  totRowHtml += `<td>${grandMwh.toFixed(2)}</td><td>${baseCpecs.toFixed(1)}</td></tr>`;
+
+  // System peak bonus row
+  const peakBonusRow = peakCapturePct > 0 ? `
+    <tr style="background:#FEF9E7;">
+      <td colspan="9" style="color:#7D6608;font-size:0.72rem;padding:0.4rem 0.85rem;">
+        <strong>+ System Peak Bonus (25× · ${capturePctDisplay}% capture):</strong>
+        +${peakBonusCpecs.toFixed(1)} CPECs
+      </td>
+      <td style="text-align:right;font-family:var(--mono);font-size:0.75rem;font-weight:600;color:#7D6608;background:#FEF9E7;">+${peakBonusCpecs.toFixed(1)}</td>
+    </tr>
+    <tr class="total-row">
+      <td colspan="9">TOTAL (base + system peak bonus)</td>
+      <td>${totalCpecs.toFixed(1)}</td>
+    </tr>` : `
+    <tr class="total-row">
+      <td colspan="9">TOTAL</td>
+      <td>${totalCpecs.toFixed(1)}</td>
+    </tr>`;
+
+  // Season header cells (2 cols each)
+  const seasonHeaderCols = seasonConfig.map(sc =>
+    `<th colspan="2" style="text-align:center;border-left:2px solid rgba(255,255,255,0.2);">
+      <span style="color:${sc.color};">●</span> ${sc.label}
+      <div style="font-size:0.6rem;font-weight:400;opacity:0.8;">${sc.dateRange}</div>
+    </th>`
+  ).join('');
+
+  const subHeaderCols = seasonConfig.map(() =>
+    `<th>MWh in Window</th><th>CPECs</th>`
+  ).join('');
+
+  return `
+    <div class="cpec-results">
+      <div class="cpec-results-title">MA Clean Peak Energy Certificates (CPECs)</div>
+
+      <div class="cpec-stats-grid-5">
+        <div class="cpec-stat accent">
+          <div class="cpec-stat-value">${fmt(totalCpecs, 1)}</div>
+          <div class="cpec-stat-label">Total Annual CPECs</div>
+        </div>
+        <div class="cpec-stat">
+          <div class="cpec-stat-value">${fmt(baseCpecs, 1)}</div>
+          <div class="cpec-stat-label">Base Window CPECs</div>
+        </div>
+        <div class="cpec-stat" style="border-color:#F9E79F;background:#FEFDF5;">
+          <div class="cpec-stat-value" style="color:#7D6608;">${fmt(peakBonusCpecs, 1)}</div>
+          <div class="cpec-stat-label" style="color:#A08020;">System Peak Bonus<br>(25× · ${capturePctDisplay}% capture)</div>
+        </div>
+        <div class="cpec-stat">
+          <div class="cpec-stat-value">${fmt(bySeason.summer.cpecs, 1)}</div>
+          <div class="cpec-stat-label">Summer CPECs (4× mult)</div>
+        </div>
+        <div class="cpec-stat">
+          <div class="cpec-stat-value">$${fmt(annualRevenue/1000, 1)}k</div>
+          <div class="cpec-stat-label">Est. Annual Revenue<br>@ $${fmt(pricePerCpec, 0)}/CPEC</div>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);">
+        <table class="cpec-breakdown-table">
+          <thead>
+            <tr>
+              <th rowspan="2" style="vertical-align:bottom;">Month</th>
+              ${seasonHeaderCols}
+              <th colspan="2" style="text-align:center;border-left:2px solid rgba(255,255,255,0.2);">Base Total</th>
+            </tr>
+            <tr>${subHeaderCols}<th>MWh</th><th>CPECs</th></tr>
+          </thead>
+          <tbody>${monthRowsHtml}${totRowHtml}${peakBonusRow}</tbody>
+        </table>
+      </div>
+
+      <div class="cpec-note">
+        <strong>Methodology:</strong> Base CPECs = net AC output (MWh, floor 0) during Seasonal Peak Periods on business days × seasonal multiplier per 225 CMR 21.05(6)(a). System Peak bonus = highest-output qualifying hour per month × seasonal mult × 25 × <strong>${capturePctDisplay}% capture rate</strong> — representing the user's assumption that the ISO-NE monthly system peak falls within the Clean Peak window in ${capturePctDisplay}% of months. No resource-specific multipliers (Resilience, SMART ES, Near-term, Distribution Circuit, Existing Resource, Contracted Resource) applied — adjust manually if applicable to this project.
+      </div>
+    </div>`;
+}
+
+// Reset CPEC inputs to regulation defaults
+document.getElementById('cpec-reset').addEventListener('click', () => {
+  document.getElementById('cpec-spr-start').value = 17;
+  document.getElementById('cpec-spr-end').value   = 21;
+  document.getElementById('cpec-spr-mult').value  = 1;
+  document.getElementById('cpec-sum-start').value = 16;
+  document.getElementById('cpec-sum-end').value   = 20;
+  document.getElementById('cpec-sum-mult').value  = 4;
+  document.getElementById('cpec-fal-start').value = 16;
+  document.getElementById('cpec-fal-end').value   = 20;
+  document.getElementById('cpec-fal-mult').value  = 1;
+  document.getElementById('cpec-win-start').value = 16;
+  document.getElementById('cpec-win-end').value   = 20;
+  document.getElementById('cpec-win-mult').value  = 4;
+  document.getElementById('cpec-price').value     = 65;
+  updateSliderUI(100);
+  document.getElementById('cpec-peak-pct').value  = 100;
+});
+
+// Program mode toggle
+const programSelect   = document.getElementById('program-mode');
+const cpecConfigPanel = document.getElementById('cpec-config-panel');
+const programModeNote = document.getElementById('program-mode-note');
+const compWrapEl      = document.getElementById('comparison-wrap');
+
+function getProgramMode() {
+  return programSelect.value; // 'none' | 'cpec'
+}
+
+programSelect.addEventListener('change', () => {
+  const mode = getProgramMode();
+  if (mode === 'cpec') {
+    cpecConfigPanel.classList.add('visible');
+    programModeNote.textContent = 'CPEC estimates will appear in dispatch results below.';
+  } else {
+    cpecConfigPanel.classList.remove('visible');
+    programModeNote.textContent = 'No CPEC calculations will be shown in results.';
+  }
+});
+
+// Slider live update
+function updateSliderUI(val) {
+  const pct = Math.round(val);
+  document.getElementById('peak-pct-badge').textContent  = pct + '%';
+  document.getElementById('peak-pct-inline').textContent = pct + '%';
+  const months = Math.round(pct / 100 * 12);
+  document.getElementById('peak-cpec-explain').textContent =
+    months === 12 ? 'all 12 monthly peak-hour bonuses' :
+    months === 0  ? 'no monthly peak-hour bonuses' :
+    `~${months} of 12 monthly peak-hour bonuses`;
+  // Update CSS custom property for track fill
+  const slider = document.getElementById('cpec-peak-pct');
+  slider.style.setProperty('--slider-pct', pct + '%');
+}
+
+document.getElementById('cpec-peak-pct').addEventListener('input', function() {
+  updateSliderUI(this.value);
+});
+
+// Init slider display
+updateSliderUI(100);
 
 // ============================================================
 // BATTERY CHIP MANAGER
@@ -1548,7 +3010,7 @@ function fmt(n, dec=1) {
 // RENDER RESULTS (multi-scenario)
 // ============================================================
 
-function buildScenarioPanel(result, panelId, isActive) {
+function buildScenarioPanel(result, panelId, isActive, cpecResult) {
   const { netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr, params, batKwh } = result;
   const annualNet = netAc.reduce((a,b) => a+b, 0);
   const annualAux = auxCon.reduce((a,b) => a+b, 0);
@@ -1637,6 +3099,11 @@ function buildScenarioPanel(result, panelId, isActive) {
 
     <div style="margin-top:1.25rem;margin-bottom:.5rem;font-size:.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">
       8760 Hourly Preview <span style="font-weight:400;color:var(--text-muted);">(first 100 rows · EArrMPP and Inv Output for reference only — not in download)</span>
+    </div>
+    ${result.perArrayStats ? buildPerArrayStrip(result.perArrayStats) : ''}
+    ${cpecResult ? buildCpecResultsHtml(cpecResult) : ''}
+    <div style="margin-top:1.25rem;margin-bottom:.5rem;font-size:.75rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;">
+      8760 Hourly Data Preview
     </div>
     <div class="table-wrap">
       <table>
@@ -1929,9 +3396,26 @@ function renderAllResults(results, params) {
   panelsEl.innerHTML = '';
   compBody.innerHTML = '';
 
-  const multi = results.length > 1;
+  const multi    = results.length > 1;
+  const showCpec = getProgramMode() === 'cpec';
+
   compWrap.style.display = multi ? 'block' : 'none';
   tabsEl.style.display   = multi ? 'flex'  : 'none';
+
+  // Update comparison table header to show/hide CPEC columns
+  const compHead = document.querySelector('.comparison-table thead tr');
+  if (compHead) {
+    const cpecCols = compHead.querySelectorAll('.cpec-col');
+    cpecCols.forEach(el => el.remove());
+    if (showCpec) {
+      compHead.innerHTML += `
+        <th class="cpec-col">Est. CPECs</th>
+        <th class="cpec-col">Est. CPEC Revenue</th>`;
+    }
+  }
+
+  // Compute CPEC params once (shared across all scenarios)
+  const cpecParams = showCpec ? getCpecParams() : null;
 
   // Find best net gen for highlighting
   const maxNet = Math.max(...results.map(r => r.netAc.reduce((a,b)=>a+b,0)));
@@ -1943,8 +3427,11 @@ function renderAllResults(results, params) {
 
     const yld       = annualNet / params.pvKw;
     const isBest    = Math.abs(annualNet - maxNet) < 1;
-    const label     = `${(batKwh/1000).toFixed(0)} MWh`;
+    const label     = result.scenarioLabel || `${(result.batKwh/1000).toFixed(0)} MWh`;
     const panelId   = `panel-${idx}`;
+
+    // Compute CPECs for this scenario (only if MA program selected)
+    const cpecResult = showCpec ? calcCpecs(netAc, cpecParams) : null;
 
     // Tab
     if (multi) {
@@ -1964,16 +3451,23 @@ function renderAllResults(results, params) {
     // Comparison row
     if (multi) {
       const tr = document.createElement('tr');
+      let cpecCells = '';
+      if (showCpec && cpecResult) {
+        cpecCells = `
+          <td class="cpec-col">${fmt(cpecResult.totalCpecs, 1)}</td>
+          <td class="cpec-col">$${fmt(cpecResult.annualRevenue/1000, 1)}k</td>`;
+      }
       tr.innerHTML = `
         <td class="${isBest?'best':''}">${label}${isBest?' 🏆':''}</td>
         <td class="${isBest?'best':''}">${fmt(annualNet/1000)}</td>
         <td class="${isBest?'best':''}">${fmt(yld)}</td>
-        <td>${fmt(annualAux/1000)}</td>`;
+        <td>${fmt(annualAux/1000)}</td>
+        ${cpecCells}`;
       compBody.appendChild(tr);
     }
 
     // Panel
-    const panel = buildScenarioPanel(result, panelId, idx===0);
+    const panel = buildScenarioPanel(result, panelId, idx===0, cpecResult);
     panelsEl.appendChild(panel);
   });
 
@@ -2003,6 +3497,12 @@ function buildDMInputsSheet(result, params) {
   const totalNetKwh = netAc.reduce((a,b)=>a+b,0);
   const totalAuxKwh = auxCon.reduce((a,b)=>a+b,0);
   const specYield   = totalNetKwh / params.pvKw;
+
+  // Compute CPECs for this sheet (only if MA program selected)
+  const showCpecInSheet = getProgramMode() === 'cpec';
+  const cpecParams  = showCpecInSheet ? getCpecParams() : null;
+  const cpecResult  = showCpecInSheet ? calcCpecs(netAc, cpecParams) : null;
+  const totalCpecs  = cpecResult ? parseFloat(cpecResult.totalCpecs.toFixed(2)) : 0;
 
   // Monthly arrays (1-indexed)
   const mNetKwh = new Float64Array(12);
@@ -2047,7 +3547,7 @@ function buildDMInputsSheet(result, params) {
     ['RTE Energy Loss (MWh)',                        0],
     ['ESS RTE Degradation Rate (%)',                 0.001],
     ['Clean Peak Credits - PV (credits/year)',       0],
-    ['Clean Peak Credits - ESS (credits/year)',      0],
+    ['Clean Peak Credits - ESS (credits/year)',      totalCpecs],
     ['DRV Production (MWh)',                         0],
     ['ICAP II (MWh)',                                0],
     ['Weighted Avg LMP ($/kWh)',                     0],
@@ -2254,26 +3754,36 @@ function downloadAllXLSX(results, params) {
 }
 
 // ============================================================
-// EVENT HANDLERS
+// ARRAY MODE — single vs multi
 // ============================================================
 
-// File input / drag-drop
+let arrayMode   = 'single';
+let multiArrays = [];   // [{id, filename, pvWatts, format, meta, dcKwp, pvKw, invAcKw, batKw, batKwhSizes:[]}]
+let multiNextId = 1;
+
+function setArrayMode(mode) {
+  arrayMode = mode;
+  document.getElementById('mode-btn-single').classList.toggle('active', mode === 'single');
+  document.getElementById('mode-btn-multi').classList.toggle('active', mode === 'multi');
+  document.getElementById('single-array-panel').classList.toggle('hidden', mode !== 'single');
+  document.getElementById('multi-array-panel').classList.toggle('visible', mode === 'multi');
+  document.getElementById('step2-single-card').style.display  = mode === 'single' ? '' : 'none';
+  document.getElementById('step2-multi-container').style.display = mode === 'multi'  ? '' : 'none';
+  updateRunReadiness();
+}
+
+// ── Single-array file handling ────────────────────────────────
+
 const dropzone  = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
 
-dropzone.addEventListener('dragover', e => {
-  e.preventDefault();
-  dropzone.classList.add('drag-over');
-});
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
 dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
 dropzone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropzone.classList.remove('drag-over');
+  e.preventDefault(); dropzone.classList.remove('drag-over');
   if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
 });
-fileInput.addEventListener('change', e => {
-  if (e.target.files[0]) handleFile(e.target.files[0]);
-});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
 function handleFile(file) {
   hideError('parse-error');
@@ -2281,27 +3791,360 @@ function handleFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      pvWatts = parsePVSystCSV(e.target.result);
+      const result = parseEnergyCSV(e.target.result);
+      pvWatts = result.pvWatts;
+      const formatLabel = result.format === 'pvcase' ? 'PVCase' : 'PVSyst';
+      const projectName = result.meta['Project name'] || result.meta['Project'] || '';
+      const dcCap = result.meta['DC capacity (kWp)'] || '';
+      const acCap = result.meta['AC Capacity (kVA)'] || '';
+      if (dcCap) { const v = parseFloat(dcCap); if (!isNaN(v) && v > 0) document.getElementById('p-pv-kw').value = Math.round(v); }
+      if (acCap) { const v = parseFloat(acCap);  if (!isNaN(v) && v > 0) document.getElementById('p-inv-kw').value = Math.round(v); }
+      let meta = [`${pvWatts.length.toLocaleString()} hourly rows`, `${formatLabel} format`];
+      if (projectName) meta.push(`"${projectName}"`);
+      if (dcCap) meta.push(`${parseFloat(dcCap).toLocaleString()} kWp DC`);
+      if (acCap) meta.push(`${parseFloat(acCap).toLocaleString()} kVA AC`);
+      meta.push(`Peak: ${Math.round(Math.max(...pvWatts)).toLocaleString()} W`);
       document.getElementById('file-name').textContent = file.name;
-      document.getElementById('file-meta').textContent =
-        `${pvWatts.length.toLocaleString()} hourly rows · EArrMPP parsed · ` +
-        `Peak: ${Math.round(Math.max(...pvWatts)).toLocaleString()} W`;
+      document.getElementById('file-meta').textContent = meta.join(' · ');
       document.getElementById('file-loaded').classList.add('visible');
-      document.getElementById('btn-run').disabled = false;
-      document.getElementById('run-hint').textContent = 'Ready to run';
-    } catch(err) {
-      showError('parse-error', '⚠ ' + err.message);
-      pvWatts = null;
-    }
+      updateRunReadiness();
+      document.getElementById('run-hint').textContent = dcCap || acCap ? 'Ready to run · System parameters updated from file' : 'Ready to run';
+    } catch(err) { showError('parse-error', '⚠ ' + err.message); pvWatts = null; updateRunReadiness(); }
   };
   reader.readAsText(file);
 }
 
-// Run button
+// ── Multi-array file handling ─────────────────────────────────
+
+document.getElementById('multi-file-input').addEventListener('change', function(e) {
+  Array.from(e.target.files).forEach(f => loadMultiArrayFile(f));
+  this.value = '';
+});
+
+function loadMultiArrayFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const result = parseEnergyCSV(e.target.result);
+      const dcKwp = parseFloat(result.meta['DC capacity (kWp)'] || 0) || 0;
+      const acCap = parseFloat(result.meta['AC Capacity (kVA)'] || 0) || 0;
+      const entry = {
+        id:          multiNextId++,
+        filename:    file.name,
+        pvWatts:     result.pvWatts,
+        format:      result.format,
+        meta:        result.meta,
+        dcKwp,
+        pvKw:        dcKwp > 0 ? Math.round(dcKwp) : (parseFloat(document.getElementById('p-pv-kw').value) || 10590),
+        invAcKw:     acCap > 0 ? Math.round(acCap)  : (parseFloat(document.getElementById('p-inv-kw').value) || 4980),
+        batKw:       parseFloat(document.getElementById('p-bat-kw').value) || 5000,
+        batKwhSizes: [...batKwhSizes],   // copy current chip set as default
+      };
+      multiArrays.push(entry);
+      renderMultiStep2();
+      updateMultiSummary();
+      updateRunReadiness();
+      hideError('parse-error');
+    } catch(err) { showError('parse-error', `⚠ ${file.name}: ${err.message}`); }
+  };
+  reader.readAsText(file);
+}
+
+function removeMultiArray(id) {
+  multiArrays = multiArrays.filter(a => a.id !== id);
+  renderMultiStep2();
+  updateMultiSummary();
+  updateRunReadiness();
+}
+
+// ── Per-array Step 2 renderer ─────────────────────────────────
+
+function renderMultiStep2() {
+  const container = document.getElementById('step2-multi-container');
+  container.innerHTML = '';
+
+  multiArrays.forEach((arr, idx) => {
+    const badgeClass = arr.format === 'pvcase' ? 'badge-pvcase' : 'badge-pvsyst';
+    const badgeLabel = arr.format === 'pvcase' ? 'PVCase' : 'PVSyst';
+    const chipsHtml  = arr.batKwhSizes.map(kwh =>
+      `<div class="chip">${(kwh/1000).toFixed(0)} MWh
+         <button class="chip-remove" onclick="removeArrayChip(${arr.id},${kwh})">×</button>
+       </div>`
+    ).join('');
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `array-step2-${arr.id}`;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-header-icon" style="background:var(--nle-green-dark);color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;">${idx + 1}</div>
+        <h2 style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${arr.filename}">
+          Array ${idx + 1} — ${arr.filename}
+        </h2>
+        <span class="array-card-badge ${badgeClass}" style="flex-shrink:0;">${badgeLabel}</span>
+        <button onclick="removeMultiArray(${arr.id})"
+          style="margin-left:0.75rem;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text-muted);font-size:1.1rem;border-radius:4px;padding:2px 6px;"
+          onmouseover="this.style.background='#fee2e2';this.style.color='#b91c1c'"
+          onmouseout="this.style.background='transparent';this.style.color='var(--text-muted)'">×</button>
+      </div>
+      <div class="card-body">
+        <div class="params-grid">
+          <div class="params-section">
+            <div class="params-section-title">System Sizing</div>
+
+            <div class="field">
+              <label>PV DC Capacity</label>
+              <div class="field-row">
+                <input type="number" id="ma-pvKw-${arr.id}" value="${arr.pvKw}"
+                  min="0" step="100" onchange="syncArrayField(${arr.id},'pvKw',this.value)">
+                <span class="field-unit">kWdc</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Inverter AC Rating</label>
+              <div class="field-row">
+                <input type="number" id="ma-invAcKw-${arr.id}" value="${arr.invAcKw}"
+                  min="0" step="100" onchange="syncArrayField(${arr.id},'invAcKw',this.value)">
+                <span class="field-unit">kWac</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Battery Power Rating</label>
+              <div class="field-row">
+                <input type="number" id="ma-batKw-${arr.id}" value="${arr.batKw}"
+                  min="0" step="100" onchange="syncArrayField(${arr.id},'batKw',this.value)">
+                <span class="field-unit">kW</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Battery Energy Capacities to Test</label>
+              <div class="battery-chips" id="ma-chips-${arr.id}">${chipsHtml}</div>
+              <div class="chip-add-row">
+                <input type="number" id="ma-chip-input-${arr.id}" placeholder="e.g. 20000"
+                  min="0" step="1000"
+                  onkeydown="if(event.key==='Enter') addArrayChip(${arr.id})">
+                <span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-muted);">kWh</span>
+                <button class="btn-chip-add" onclick="addArrayChip(${arr.id})">+ Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="params-section">
+            <div class="params-section-title" style="color:var(--text-muted);">Efficiency &amp; Losses</div>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;line-height:1.5;">
+              Shared across all arrays — edit in the panel below.
+            </p>
+            <div style="margin-top:1rem;font-family:var(--mono);font-size:0.78rem;color:var(--text-secondary);display:grid;gap:4px;">
+              <div>Inv eff: <strong>${parseFloat(document.getElementById('p-inv-eff').value || 98).toFixed(1)}%</strong></div>
+              <div>Chg eff: <strong>${parseFloat(document.getElementById('p-chg-eff').value || 91.15).toFixed(2)}%</strong></div>
+              <div>Dis eff: <strong>${parseFloat(document.getElementById('p-dis-eff').value || 98.01).toFixed(2)}%</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  // Shared efficiency card at the bottom
+  if (multiArrays.length > 0) {
+    const effCard = document.createElement('div');
+    effCard.className = 'card';
+    effCard.innerHTML = `
+      <div class="card-header">
+        <div class="card-header-icon">🔧</div>
+        <h2>Shared — Efficiency &amp; Loss Factors</h2>
+        <span class="card-subtitle">Applied identically to all arrays</span>
+      </div>
+      <div class="card-body">
+        <div class="params-grid">
+          <div class="params-section">
+            <div class="params-section-title">Efficiency Factors</div>
+            <div class="field">
+              <label>Inverter Efficiency</label>
+              <div class="field-row">
+                <input type="number" id="p-inv-eff" value="98.0" min="80" max="100" step="0.1"
+                  onchange="refreshArrayEffLabels()">
+                <span class="field-unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Battery Charge Efficiency</label>
+              <div class="field-row">
+                <input type="number" id="p-chg-eff" value="91.15" min="70" max="100" step="0.01"
+                  onchange="refreshArrayEffLabels()">
+                <span class="field-unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Battery Discharge Efficiency</label>
+              <div class="field-row">
+                <input type="number" id="p-dis-eff" value="98.01" min="70" max="100" step="0.01"
+                  onchange="refreshArrayEffLabels()">
+                <span class="field-unit">%</span>
+              </div>
+            </div>
+          </div>
+          <div class="params-section">
+            <div class="params-section-title">Auxiliary &amp; AC Losses</div>
+            <div class="field">
+              <label>Fixed Aux Load</label>
+              <div class="field-row">
+                <input type="number" id="p-fixed-aux" value="0.10" min="0" max="5" step="0.01">
+                <span class="field-unit">% rated</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Variable Aux Load</label>
+              <div class="field-row">
+                <input type="number" id="p-var-aux" value="2.00" min="0" max="10" step="0.1">
+                <span class="field-unit">% throughput</span>
+              </div>
+            </div>
+            <div class="field">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;">
+                <div>
+                  <label>No-Load Loss</label>
+                  <div class="field-row">
+                    <input type="number" id="p-noload" value="5.0" min="0" step="0.5">
+                    <span class="field-unit">kW</span>
+                  </div>
+                </div>
+                <div>
+                  <label>MV Full-Load</label>
+                  <div class="field-row">
+                    <input type="number" id="p-mv-loss" value="37.4" min="0" step="0.1">
+                    <span class="field-unit">kW</span>
+                  </div>
+                </div>
+                <div>
+                  <label>Cable Full-Load</label>
+                  <div class="field-row">
+                    <input type="number" id="p-cable-loss" value="36.9" min="0" step="0.1">
+                    <span class="field-unit">kW</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(effCard);
+  }
+
+  updateMultiSummary();
+}
+
+function syncArrayField(id, field, val) {
+  const arr = multiArrays.find(a => a.id === id);
+  if (arr) arr[field] = parseFloat(val) || 0;
+  updateMultiSummary();
+}
+
+function addArrayChip(id) {
+  const arr = multiArrays.find(a => a.id === id);
+  if (!arr) return;
+  const input = document.getElementById(`ma-chip-input-${id}`);
+  const val   = parseInt(input.value);
+  if (val > 0 && !arr.batKwhSizes.includes(val)) {
+    arr.batKwhSizes.push(val);
+    arr.batKwhSizes.sort((a, b) => a - b);
+    input.value = '';
+    rerenderArrayChips(arr);
+    updateMultiSummary();
+    updateRunReadiness();
+  }
+}
+
+function removeArrayChip(id, kwh) {
+  const arr = multiArrays.find(a => a.id === id);
+  if (!arr) return;
+  arr.batKwhSizes = arr.batKwhSizes.filter(k => k !== kwh);
+  rerenderArrayChips(arr);
+  updateMultiSummary();
+  updateRunReadiness();
+}
+
+function rerenderArrayChips(arr) {
+  const container = document.getElementById(`ma-chips-${arr.id}`);
+  if (!container) return;
+  container.innerHTML = arr.batKwhSizes.map(kwh =>
+    `<div class="chip">${(kwh/1000).toFixed(0)} MWh
+       <button class="chip-remove" onclick="removeArrayChip(${arr.id},${kwh})">×</button>
+     </div>`
+  ).join('');
+}
+
+function refreshArrayEffLabels() {
+  // Update the efficiency summary labels on each array card when shared eff fields change
+  multiArrays.forEach(arr => {
+    const invEl = document.querySelector(`#array-step2-${arr.id} .params-section:last-child strong`);
+  });
+  // Simpler: just re-render the multi container (it reads current p-inv-eff etc.)
+  renderMultiStep2();
+}
+
+function updateMultiSummary() {
+  const bar = document.getElementById('multi-summary-bar');
+  if (multiArrays.length === 0) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
+
+  const totalDc   = multiArrays.reduce((s, a) => s + a.dcKwp, 0);
+  const totalAc   = multiArrays.reduce((s, a) => s + a.invAcKw, 0);
+  const totalKwh  = multiArrays.reduce((s, a) => s + (a.batKwhSizes.length > 0 ? Math.max(...a.batKwhSizes) : 0), 0);
+  const scenarios = multiArrays.every(a => a.batKwhSizes.length > 0)
+    ? multiArrays.reduce((prod, a) => prod * a.batKwhSizes.length, 1)
+    : 0;
+
+  document.getElementById('ms-count').textContent = multiArrays.length;
+  document.getElementById('ms-dc').textContent    = totalDc > 0 ? totalDc.toLocaleString() : '—';
+  document.getElementById('ms-ac').textContent    = totalAc.toLocaleString();
+  document.getElementById('ms-kwh').textContent   = scenarios > 0
+    ? `${scenarios} scenario${scenarios > 1 ? 's' : ''}`
+    : '— add chips';
+}
+
+// Cartesian product helper
+function cartesian(arrays) {
+  return arrays.reduce((acc, arr) =>
+    acc.flatMap(combo => arr.map(val => [...combo, val])),
+    [[]]
+  );
+}
+
+function updateRunReadiness() {
+  const btn  = document.getElementById('btn-run');
+  const hint = document.getElementById('run-hint');
+  if (arrayMode === 'single') {
+    btn.disabled = !pvWatts;
+    if (pvWatts) hint.textContent = 'Ready to run';
+    else hint.textContent = 'Upload a PVSyst CSV to enable';
+  } else {
+    const allHaveChips = multiArrays.length > 0 && multiArrays.every(a => a.batKwhSizes.length > 0);
+    btn.disabled = !allHaveChips;
+    if (multiArrays.length === 0)  hint.textContent = 'Add at least one array CSV to enable';
+    else if (!allHaveChips)        hint.textContent = 'Add at least one battery size to each array';
+    else {
+      const scenarios = multiArrays.reduce((p, a) => p * a.batKwhSizes.length, 1);
+      hint.textContent = `Ready to run · ${multiArrays.length} arrays · ${scenarios} scenario${scenarios > 1 ? 's' : ''} (cartesian product)`;
+    }
+  }
+}
+
+// ── Run button ────────────────────────────────────────────────
+
 document.getElementById('btn-run').addEventListener('click', async () => {
-  if (!pvWatts) return;
-  if (batKwhSizes.length === 0) {
+  if (arrayMode === 'single' && !pvWatts) return;
+  if (arrayMode === 'multi'  && multiArrays.length === 0) return;
+
+  if (arrayMode === 'single' && batKwhSizes.length === 0) {
     showError('run-error', '⚠ Add at least one battery energy capacity above.');
+    return;
+  }
+  if (arrayMode === 'multi' && !multiArrays.every(a => a.batKwhSizes.length > 0)) {
+    showError('run-error', '⚠ Every array needs at least one battery energy capacity.');
     return;
   }
   hideError('run-error');
@@ -2309,63 +4152,127 @@ document.getElementById('btn-run').addEventListener('click', async () => {
   const btn = document.getElementById('btn-run');
   btn.disabled = true;
   btn.classList.add('running');
-
   const progWrap = document.getElementById('progress-wrap');
   progWrap.classList.add('visible');
 
   try {
-    const p = getParams();
+    const p    = getParams();
     allResults = [];
-    const n = batKwhSizes.length;
 
-    for (let s = 0; s < n; s++) {
-      const kwh = batKwhSizes[s];
-      setProgress(Math.round(10 + (s/n)*75),
-        `Running scenario ${s+1}/${n}: ${(kwh/1000).toFixed(0)} MWh battery...`);
-      await new Promise(r => setTimeout(r, 20));
+    if (arrayMode === 'single') {
+      // ── Single-array dispatch ──────────────────────────────
+      const n = batKwhSizes.length;
+      for (let s = 0; s < n; s++) {
+        const kwh = batKwhSizes[s];
+        setProgress(Math.round(10 + (s / n) * 75),
+          `Running scenario ${s + 1}/${n}: ${(kwh / 1000).toFixed(0)} MWh battery…`);
+        await new Promise(r => setTimeout(r, 20));
+        const dispatch = runDispatch(pvWatts, {
+          invAcKw: p.invAcKw, batKw: p.batKw, batKwh: kwh,
+          invEff: p.invEff, chargeEff: p.chargeEff, dischargeEff: p.dischargeEff,
+          fixedAuxPct: p.fixedAuxPct, varAuxPct: p.varAuxPct,
+          noLoadLoss: p.noLoadLoss, mvFullLoss: p.mvFullLoss, cableFullLoss: p.cableFullLoss,
+        });
+        allResults.push({ batKwh: kwh, perArrayStats: null, ...dispatch, params: p });
+      }
 
-      const { netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr } = runDispatch(pvWatts, {
-        invAcKw:      p.invAcKw,
-        batKw:        p.batKw,
-        batKwh:       kwh,
-        invEff:       p.invEff,
-        chargeEff:    p.chargeEff,
-        dischargeEff: p.dischargeEff,
-        fixedAuxPct:  p.fixedAuxPct,
-        varAuxPct:    p.varAuxPct,
-        noLoadLoss:   p.noLoadLoss,
-        mvFullLoss:   p.mvFullLoss,
-        cableFullLoss:p.cableFullLoss,
-      });
-      allResults.push({ batKwh: kwh, netAc, auxCon, eArrKw, invOutKw, chargeKwArr, dischKwArr, socArr, params: p });
+    } else {
+      // ── Multi-array: cartesian product dispatch ────────────
+      const combos    = cartesian(multiArrays.map(a => a.batKwhSizes));
+      const nCombos   = combos.length;
+
+      for (let s = 0; s < nCombos; s++) {
+        const kwhCombo = combos[s]; // [kwhForArray0, kwhForArray1, ...]
+        const label    = multiArrays.map((a, i) =>
+          `Arr${i + 1}: ${(kwhCombo[i] / 1000).toFixed(0)}MWh`
+        ).join(' / ');
+
+        setProgress(Math.round(10 + (s / nCombos) * 75),
+          `Scenario ${s + 1}/${nCombos}: ${label}…`);
+        await new Promise(r => setTimeout(r, 20));
+
+        // Dispatch each array with its assigned kWh for this combo
+        const perArrayResults = [];
+        for (let a = 0; a < multiArrays.length; a++) {
+          const arr     = multiArrays[a];
+          const arrKwh  = kwhCombo[a];
+          const d = runDispatch(arr.pvWatts, {
+            invAcKw: arr.invAcKw, batKw: arr.batKw, batKwh: arrKwh,
+            invEff: p.invEff, chargeEff: p.chargeEff, dischargeEff: p.dischargeEff,
+            fixedAuxPct: p.fixedAuxPct, varAuxPct: p.varAuxPct,
+            noLoadLoss: p.noLoadLoss, mvFullLoss: p.mvFullLoss, cableFullLoss: p.cableFullLoss,
+          });
+          perArrayResults.push({ arr, dispatch: d, kwh: arrKwh });
+        }
+
+        // Sum hourly outputs across all arrays
+        const combinedNetAc  = new Float64Array(8760);
+        const combinedAuxCon = new Float64Array(8760);
+        const combinedEArr   = new Float64Array(8760);
+        const combinedInvOut = new Float64Array(8760);
+        perArrayResults.forEach(({ dispatch: d }) => {
+          for (let i = 0; i < 8760; i++) {
+            combinedNetAc[i]  += d.netAc[i];
+            combinedAuxCon[i] += d.auxCon[i];
+            combinedEArr[i]   += d.eArrKw[i];
+            combinedInvOut[i] += d.invOutKw[i];
+          }
+        });
+
+        const perArrayStats = perArrayResults.map(({ arr, dispatch: d, kwh }) => ({
+          filename:    arr.filename,
+          invAcKw:     arr.invAcKw,
+          batKwh:      kwh,
+          annualNetMwh: d.netAc.reduce((s, v) => s + v, 0) / 1000,
+          annualAuxMwh: d.auxCon.reduce((s, v) => s + v, 0) / 1000,
+        }));
+
+        const combinedParams = {
+          ...p,
+          pvKw:    multiArrays.reduce((s, a) => s + a.pvKw, 0),
+          invAcKw: multiArrays.reduce((s, a) => s + a.invAcKw, 0),
+          batKw:   multiArrays.reduce((s, a) => s + a.batKw, 0),
+        };
+
+        allResults.push({
+          batKwh:      kwhCombo.reduce((s, k) => s + k, 0),
+          scenarioLabel: label,
+          netAc:       combinedNetAc,
+          auxCon:      combinedAuxCon,
+          eArrKw:      combinedEArr,
+          invOutKw:    combinedInvOut,
+          chargeKwArr: new Float64Array(8760),
+          dischKwArr:  new Float64Array(8760),
+          socArr:      new Float64Array(8760),
+          params:      combinedParams,
+          perArrayStats,
+        });
+      }
     }
 
-    setProgress(90, 'Rendering results...');
+    setProgress(90, 'Rendering results…');
     await new Promise(r => setTimeout(r, 20));
-    renderAllResults(allResults, p);
-    setProgress(100, `Complete ✓  (${n} scenario${n>1?'s':''} run)`);
+    const displayParams = arrayMode === 'multi' ? allResults[0].params : p;
+    renderAllResults(allResults, displayParams);
+    const n = allResults.length;
+    setProgress(100, `Complete ✓  (${n} scenario${n > 1 ? 's' : ''} run${arrayMode === 'multi' ? ` · ${multiArrays.length} arrays` : ''})`);
     setTimeout(() => progWrap.classList.remove('visible'), 1800);
 
   } catch(err) {
     showError('run-error', '⚠ Dispatch error: ' + err.message);
     progWrap.classList.remove('visible');
   }
-
   btn.disabled = false;
   btn.classList.remove('running');
 });
 
 // Downloads
-document.getElementById('btn-csv').addEventListener('click', () => {
-  if (allResults.length) downloadAllCSV(allResults);
-});
-
-document.getElementById('btn-xlsx').addEventListener('click', () => {
-  if (allResults.length) downloadAllXLSX(allResults, allResults[0].params);
-});
+document.getElementById('btn-csv').addEventListener('click',  () => { if (allResults.length) downloadAllCSV(allResults); });
+document.getElementById('btn-xlsx').addEventListener('click', () => { if (allResults.length) downloadAllXLSX(allResults, allResults[0].params); });
 
 // Initialize chips on load
 renderChips();
+
 </script>
 </body>
 </html>
